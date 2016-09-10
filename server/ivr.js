@@ -14,8 +14,8 @@ const viewInstagramPost = (twiml) => {
     + 'To like this photo, please press 1. '
     + 'To comment on this photo, please press 2. '
     + 'To share this photo, please press 3. '
-    + 'To view next photo, please press 4. ',
-    + 'To repeat these options, please press 7. '
+    + 'To view next photo, please press 4. '
+    + 'To repeat these options, please press 7. ',
     { voice: 'alice', language: 'en-GB' });
   });
 };
