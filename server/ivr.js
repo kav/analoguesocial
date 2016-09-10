@@ -37,10 +37,10 @@ router.post('/welcome', twilio.webhook({ validate: false }), (request, response)
     numDigits: '1',
     method: 'POST',
   }, (node) => {
-    node.say('Welcome to Instagram, Capture and Share the World\'s Moments,' +
-      'Brought to you by Analogue Social;' +
-      'surfing the information superhighway at the pace of yesterday.' +
-      'To view your Instagram feed please press 1.' +
+    node.say('Welcome to Instagram. Capture and Share the World\'s Moments, ' +
+      'Brought to you by Analogue Social; ' +
+      'surfing the information superhighway at the pace of yesterday. ' +
+      'To view your Instagram feed please press 1. ' +
       'To repeat this message please stay on the line. . .'
       , { loop: 3 });
   });
