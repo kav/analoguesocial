@@ -43,6 +43,7 @@
     "url-loader": "^0.5.7"
   },
   "dependencies": {
-    "body-parser": "^1.15.2"
+    "body-parser": "^1.15.2",
+    "node-fetch": "^1.6.0"
   }
 }

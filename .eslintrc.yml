@@ -1,0 +1,41 @@
+rules:
+  no-confusing-arrow: off
+  # react/jsx-quotes: off
+  jsx-quotes:
+  - error
+  - prefer-double
+  import/named: error
+  # import/default: error
+  import/no-commonjs: error
+  import/no-amd: error
+  import/imports-first: error
+  import/prefer-default-export: error
+  import/extensions:
+  - error
+  - jsx: never
+  # filenames/match-exported: off until fixed
+  # - error
+  # - transform: kebab
+  react/no-direct-mutation-state: error
+  react/no-find-dom-node: off
+env:
+  es6: true
+  node: true
+  browser: true
+globals:
+  describe: false
+  it: false
+  beforeEach: false
+  afterEach: false
+  before: false
+  after: false
+ecmaVersion: 7
+parser: babel-eslint
+plugins:
+- react
+- filenames
+ecmaFeatures:
+  modules: true
+  experimentalObjectRestSpread: true
+  jsx: true
+extends: airbnb
