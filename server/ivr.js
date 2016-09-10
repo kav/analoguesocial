@@ -1,7 +1,7 @@
 import express from 'express';
 import twilio from 'twilio';
 
-import describeImage from './describe-image';
+// import describeImage from './describe-image';
 
 // eslint-disable-next-line new-cap
 const router = express.Router();
@@ -32,7 +32,7 @@ const viewPost = (twiml) => {
     method: 'POST',
   }, (node) => {
     node.say('At LOCATION on DATE at TIME, USERNAME took a photo of DESCRIPTION. '
-    + sayInstagramActions(),
+    + `${sayInstagramActions()}`,
     { voice: 'alice', language: 'en-GB' });
   });
   return twiml;
@@ -44,8 +44,8 @@ const likePost = (twiml) => {
     numDigits: '1',
     method: 'POST',
   }, (node) => {
-    node.say('Liked photo of DESCRIPTION At LOCATION on DATE at TIME by USERNAME. '
-    + sayInstagramActions(),
+    node.say('Liked photo of DESCRIPTION At LOCATION on DATE at TIME by USERNAME. ' +
+       `${sayInstagramActions()}`,
     { voice: 'alice', language: 'en-GB' });
   });
   return twiml;
@@ -66,7 +66,7 @@ const commentOnPost = (twiml) => {
       transcribeCallback: '/ivr/save_comment',
       playBeep: true,
     });
-    node.say('Comment saved. ' + sayInstagramActions(),
+    node.say(`Comment saved. ${sayInstagramActions()}`,
     { voice: 'alice', language: 'en-GB' });
   });
   return twiml;
@@ -149,4 +149,9 @@ router.post('/instagram_actions', twilio.webhook({ validate: false }), (request,
   response.send(redirectWelcome());
 });
 
+// POST: '/ivr/save_comment'
+router.post('/save_comment', twilio.webhook({ validate: false }), (request, response) => {
+  console.log(request);
+  response.send(200);
+});
 export default router;
