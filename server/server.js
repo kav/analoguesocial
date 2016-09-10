@@ -5,7 +5,6 @@ import describeImage from './describe-image';
 import sendSMS from './twilio-sms';
 import ivr from './ivr';
 
-describeImage();
 const app = express();
 
 app.use(bodyParser.json());
