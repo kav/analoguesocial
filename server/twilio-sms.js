@@ -1,7 +1,6 @@
 import express from 'express';
 import twilio from 'twilio';
 
-// eslint-disable-next-line new-cap
 const router = express.Router();
 const client = twilio('AC941d110142d546bc70970e028751bbd2', 'd5d30b74960c418bace9405d07611915');
 
