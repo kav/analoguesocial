@@ -103,10 +103,10 @@ router.post('/welcome', twilio.webhook({ validate: false }), (request, response)
     numDigits: '10',
     method: 'POST',
   }, (node) => {
-    node.say('Welcome to Instagram. Capture and Share the World\'s Moments, ' +
-      'Brought to you by Analogue Social; ' +
+    node.say('Welcome to insta gram. Capture and Share the World\'s Moments, ' +
+      'Brought to you by Analogue Social. ' +
       'surfing the information superhighway at the pace of yesterday. ' +
-      'To view your Instagram feed, please press 1. ' +
+      'To view your Insta gram feed, please press 1. ' +
       'If you are on a rotary telephone please hold for an operator.');
   });
   response.send(twiml);
