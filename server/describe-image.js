@@ -15,14 +15,14 @@ const describeImage = (url, cb) => {
   fetch('https://api.cloudsightapi.com/image_requests', {
     method: 'POST',
     headers: {
-      Authorization: 'CloudSight YRDG0utyNHJuRGcfnLGcZg',
+      Authorization: 'CloudSight ${process.env.AS_CS_KEY}',
     },
     body,
   }).then((res) => res.json())
   .then((json) => {
     fetch(`https://api.cloudsightapi.com/image_responses/${json.token}`, {
       headers: {
-        Authorization: 'CloudSight YRDG0utyNHJuRGcfnLGcZg',
+        Authorization: 'CloudSight ${process.env.AS_CS_KEY}',
       },
     }).then((res) => res.json())
     .then((json1) => {
