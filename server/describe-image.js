@@ -1,17 +1,33 @@
 import fetch from 'node-fetch';
+import FormData from 'form-data';
 
 const describeImage = (url, cb) => {
-  fetch('api.cloudsightapi.com', {
+  console.log(`describing: ${url}`);
+  const body = new FormData();
+  body.append('image_request[remote_image_url]', url);
+  body.append('image_request[locale]',
+    'en-US'
+  );
+
+  fetch('https://api.cloudsightapi.com/image_requests', {
     method: 'POST',
     headers: {
-      Authorization: ' CloudSight YRDG0utyNHJuRGcfnLGcZg',
+      Authorization: 'CloudSight YRDG0utyNHJuRGcfnLGcZg',
     },
-    body: {
-      url: 'https://i.ytimg.com/vi/tntOCGkgt98/maxresdefault.jpg',
-    },
-  }).then((res) => {
-    console.log(res);
-    cb(res);
+    body,
+  }).then((res) => res.json())
+  .then((json) => {
+    fetch(`https://api.cloudsightapi.com/image_responses/${json.token}`, {
+      headers: {
+        Authorization: 'CloudSight YRDG0utyNHJuRGcfnLGcZg',
+      },
+    }).then((res) => res.json())
+    .then((json1) => {
+      console.log(`description: ${json1.name}`);
+      if (cb) cb(json1.name);
+    });
+  }).catch((error) => {
+    console.log(error);
   });
 };
 
