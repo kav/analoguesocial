@@ -3,6 +3,7 @@ import express from 'express';
 import bodyParser from 'body-parser';
 
 import describeImage from './describe-image';
+
 const app = express();
 
 app.use(bodyParser.json());
