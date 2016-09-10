@@ -1,7 +1,7 @@
 import fetch from 'node-fetch';
 import FormData from 'form-data';
 
-const describeImage = (url, cb) => {
+const descriptionFromImage = (url, cb) => {
   if (!url) throw new Error('Must provide a url');
   if (!cb) throw new Error('Must provide a callback');
 
@@ -34,7 +34,7 @@ const describeImage = (url, cb) => {
   });
 };
 
-export default describeImage;
+export default descriptionFromImage;
 //
   // "url": "//images.cloudsightapi.com/uploads/image_request/image/19/19404/19404152/Image.jpg",
   // "token": "AJKAWHKGLjqMd9KDNIXQfg",
