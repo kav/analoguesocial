@@ -4,7 +4,7 @@
   "description": "Social Media, for your phone",
   "main": "server/server.js",
   "scripts": {
-    "start": "babel-node server/server.js",
+    "start": "./node_modules/.bin/babel-node server/server.js",
     "lint": "eslint server --ext js --fix"
   },
   "repository": {
