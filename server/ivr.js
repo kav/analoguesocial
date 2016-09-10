@@ -5,20 +5,25 @@ import describeImage from './describe-image';
 
 // eslint-disable-next-line new-cap
 const router = express.Router();
-
+const notImpl = (twiml) => {
+  twiml.say('Functionality not implemented. Goodbye.');
+  twiml.hangup();
+};
 const viewPost = (twiml) => {
   twiml.gather({
     action: '/ivr/instagram_actions',
     numDigits: '1',
     method: 'POST',
   }, (node) => {
-    node.say('At LOCATION on DATE at TIME, USERNAME took a photo of DESCRIPTION '
+    node.say('At LOCATION on DATE at TIME, USERNAME took a photo of DESCRIPTION. '
     + 'To like this photo, please press 1. '
     + 'To comment on this photo, please press 2. '
-    // + 'To share this photo, please press 3. '
+    + 'To share this photo, please press 3. '
     + 'To view next photo, please press 4. '
-    + 'To view this user\'s profile photo, please press 5. '
-    + 'To repeat these options, please press 7. ',
+    + 'To view this user\'s profile, please press 5. '
+    + 'To view this photo again please press 6. '
+    + 'To repeat these options, please press 9. '
+    + 'Please press 0 to speak to a representative. ',
     { voice: 'alice', language: 'en-GB' });
   });
   return twiml;
@@ -30,12 +35,14 @@ const likePost = (twiml) => {
     numDigits: '1',
     method: 'POST',
   }, (node) => {
-    node.say('Liked photo of DESCRIPTION At LOCATION on DATE at TIME by USERNAME '
+    node.say('Liked photo of DESCRIPTION At LOCATION on DATE at TIME by USERNAME. '
     + 'To comment on this photo, please press 2. '
-    // + 'To share this photo, please press 3. '
+    + 'To share this photo, please press 3. '
     + 'To view next photo, please press 4. '
-    + 'To view this user\'s profile photo, please press 5. '
-    + 'To repeat these options, please press 7. ',
+    + 'To view this user\'s profile, please press 5. '
+    + 'To view this photo again please press 6. '
+    + 'To repeat these options, please press 9. '
+    + 'Please press 0 to speak to a representative. ',
     { voice: 'alice', language: 'en-GB' });
   });
   return twiml;
@@ -59,17 +66,39 @@ const commentOnPost = (twiml) => {
     node.say('Comment saved.'
     + 'To like this photo, please press 1. '
     + 'To comment again, please press 2. '
-    // + 'To share this photo, please press 3. '
+    + 'To share this photo, please press 3. '
     + 'To view next photo, please press 4. '
-    + 'To view this user\'s profile photo, please press 5. '
-    + 'To repeat these options, please press 7. ',
+    + 'To view this user\'s profile, please press 5. '
+    + 'To view this photo again please press 6. '
+    + 'To repeat these options, please press 9. '
+    + 'Please press 0 to speak to a representative. ',
     { voice: 'alice', language: 'en-GB' });
   });
   return twiml;
 };
 
-//   twiml.hangup();
+const repeatPostOptions = (twiml) => {
+  twiml.gather({
+    action: '/ivr/instagram_actions',
+    numDigits: '1',
+    method: 'POST',
+  }, (node) => {
+    node.say('To like this photo, please press 1. '
+    + 'To comment on this photo, please press 2. '
+    + 'To share this photo, please press 3. '
+    + 'To view next photo, please press 4. '
+    + 'To view this user\'s profile, please press 5. '
+    + 'To view this photo again please press 6. '
+    + 'To repeat these options, please press 9. '
+    + 'Please press 0 to speak to a representative. ',
+    { voice: 'alice', language: 'en-GB' });
+  });
+  return twiml;
+};
 
+const operator = (twiml) => {
+  twiml.dial('+12063312167');
+};
 const redirectWelcome = () => {
   const twiml = new twilio.TwimlResponse();
   twiml.say('Returning to the main menu', { voice: 'alice', language: 'en-GB' });
@@ -89,11 +118,8 @@ router.post('/welcome', twilio.webhook({ validate: false }), (request, response)
     node.say('Welcome to Instagram. Capture and Share the World\'s Moments, ' +
       'Brought to you by Analogue Social; ' +
       'surfing the information superhighway at the pace of yesterday. ' +
-      // 'To view a friend\'s Instagram feed ' +
-      // 'please enter their ten digit phone number followed by the pound sign. ' +
-      'To view your Instagram feed please press 1. ' +
-      'To repeat this message please stay on the line. . .'
-      , { loop: 3 });
+      'To view your Instagram feed, please press 1. ' +
+      'If you are on a rotary telephone please hold for an operator.');
   });
   response.send(twiml);
 });
@@ -119,7 +145,12 @@ router.post('/instagram_actions', twilio.webhook({ validate: false }), (request,
   const optionActions = {
     1: likePost,
     2: commentOnPost,
-    // 3: share,
+    3: notImpl, // sharePost
+    4: notImpl, // nextPost
+    5: notImpl, // profilePhoto
+    6: viewPost,
+    9: repeatPostOptions,
+    0: operator,
   };
 
   if (optionActions[selectedOption]) {
