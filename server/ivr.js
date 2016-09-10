@@ -86,12 +86,12 @@ router.post('/welcome', twilio.webhook({ validate: false }), (request, response)
     numDigits: '10',
     method: 'POST',
   }, (node) => {
-    node.say('Welcome to Instagram. Capture and Share the World\'s Moments, ' +
-      'Brought to you by Analogue Social; ' +
+    node.say('Welcome to insta gram. Capture and Share the World\'s Moments, ' +
+      'Brought to you by Analogue Social. ' +
       'surfing the information superhighway at the pace of yesterday. ' +
       // 'To view a friend\'s Instagram feed ' +
       // 'please enter their ten digit phone number followed by the pound sign. ' +
-      'To view your Instagram feed please press 1. ' +
+      'To view your insta gram feed please press 1. ' +
       'To repeat this message please stay on the line. . .'
       , { loop: 3 });
   });
