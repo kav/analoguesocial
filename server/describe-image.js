@@ -2,6 +2,9 @@ import fetch from 'node-fetch';
 import FormData from 'form-data';
 
 const describeImage = (url, cb) => {
+  if (!url) throw new Error('Must provide a url');
+  if (!cb) throw new Error('Must provide a callback');
+
   console.log(`describing: ${url}`);
   const body = new FormData();
   body.append('image_request[remote_image_url]', url);
@@ -24,7 +27,7 @@ const describeImage = (url, cb) => {
     }).then((res) => res.json())
     .then((json1) => {
       console.log(`description: ${json1.name}`);
-      if (cb) cb(json1.name);
+      cb(json1.name);
     });
   }).catch((error) => {
     console.log(error);
