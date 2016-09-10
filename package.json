@@ -4,7 +4,7 @@
   "description": "Social Media, for your phone",
   "main": "server/server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "babel-node server/server.js"
   },
   "repository": {
     "type": "git",
@@ -41,5 +41,8 @@
     "pre-commit": "^1.1.3",
     "style-loader": "^0.13.1",
     "url-loader": "^0.5.7"
+  },
+  "dependencies": {
+    "body-parser": "^1.15.2"
   }
 }
