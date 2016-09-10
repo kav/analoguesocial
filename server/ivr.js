@@ -1,23 +1,71 @@
 import express from 'express';
 import twilio from 'twilio';
 
+import describeImage from './describe-image';
+
 // eslint-disable-next-line new-cap
 const router = express.Router();
 
-const viewInstagramPost = (twiml) => {
+const viewPost = (twiml) => {
   twiml.gather({
-    action: '/ivr/planets',
+    action: '/ivr/instagram_actions',
     numDigits: '1',
     method: 'POST',
   }, (node) => {
-    node.say('At LOCATION on DATE at TIME, USERNAME took a photo of DESCRIPTION'
+    node.say('At LOCATION on DATE at TIME, USERNAME took a photo of DESCRIPTION '
     + 'To like this photo, please press 1. '
     + 'To comment on this photo, please press 2. '
-    + 'To share this photo, please press 3. '
+    // + 'To share this photo, please press 3. '
     + 'To view next photo, please press 4. '
+    + 'To view this user\'s profile photo, please press 5. '
     + 'To repeat these options, please press 7. ',
     { voice: 'alice', language: 'en-GB' });
   });
+  return twiml;
+};
+
+const likePost = (twiml) => {
+  twiml.gather({
+    action: '/ivr/instagram_actions',
+    numDigits: '1',
+    method: 'POST',
+  }, (node) => {
+    node.say('Liked photo of DESCRIPTION At LOCATION on DATE at TIME by USERNAME '
+    + 'To comment on this photo, please press 2. '
+    // + 'To share this photo, please press 3. '
+    + 'To view next photo, please press 4. '
+    + 'To view this user\'s profile photo, please press 5. '
+    + 'To repeat these options, please press 7. ',
+    { voice: 'alice', language: 'en-GB' });
+  });
+  return twiml;
+};
+
+const commentOnPost = (twiml) => {
+  twiml.gather({
+    action: '/ivr/instagram_actions',
+    numDigits: '1',
+    method: 'POST',
+  }, (node) => {
+    node.say('Recording a comment '
+    + 'on photo of DESCRIPTION At LOCATION on DATE at TIME by USERNAME, '
+    + 'after the beep. To end comment press the pound sign. ',
+    { voice: 'alice', language: 'en-GB' });
+    node.record({
+      transcribe: true,
+      transcribeCallback: '/ivr/save_comment',
+      playBeep: true,
+    });
+    node.say('Comment saved.'
+    + 'To like this photo, please press 1. '
+    + 'To comment again, please press 2. '
+    // + 'To share this photo, please press 3. '
+    + 'To view next photo, please press 4. '
+    + 'To view this user\'s profile photo, please press 5. '
+    + 'To repeat these options, please press 7. ',
+    { voice: 'alice', language: 'en-GB' });
+  });
+  return twiml;
 };
 
 //   twiml.hangup();
@@ -35,12 +83,14 @@ router.post('/welcome', twilio.webhook({ validate: false }), (request, response)
   const twiml = new twilio.TwimlResponse();
   twiml.gather({
     action: '/ivr/menu',
-    numDigits: '1',
+    numDigits: '10',
     method: 'POST',
   }, (node) => {
     node.say('Welcome to Instagram. Capture and Share the World\'s Moments, ' +
       'Brought to you by Analogue Social; ' +
       'surfing the information superhighway at the pace of yesterday. ' +
+      // 'To view a friend\'s Instagram feed ' +
+      // 'please enter their ten digit phone number followed by the pound sign. ' +
       'To view your Instagram feed please press 1. ' +
       'To repeat this message please stay on the line. . .'
       , { loop: 3 });
@@ -52,7 +102,7 @@ router.post('/welcome', twilio.webhook({ validate: false }), (request, response)
 router.post('/menu', twilio.webhook({ validate: false }), (request, response) => {
   const selectedOption = request.body.Digits;
   const optionActions = {
-    1: viewInstagramPost,
+    1: viewPost,
   };
 
   if (optionActions[selectedOption]) {
@@ -67,8 +117,8 @@ router.post('/menu', twilio.webhook({ validate: false }), (request, response) =>
 router.post('/instagram_actions', twilio.webhook({ validate: false }), (request, response) => {
   const selectedOption = request.body.Digits;
   const optionActions = {
-    // 1: like,
-    // 2: comment,
+    1: likePost,
+    2: commentOnPost,
     // 3: share,
   };
 
