@@ -79,7 +79,7 @@ export const precacheIgPosts = (username) => {
           descriptionFromImage(post.media, (description) => {
             if (description) {
               post.description = description;
-              userRef.child(post.id).set();
+              userRef.child(post.id).set(post);
             } else { counter--; }
           });
         }
