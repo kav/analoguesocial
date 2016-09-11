@@ -27,6 +27,7 @@ const descriptionFromImage = (url, cb) => {
         },
       }).then((res) => res.json())
     .then((json1) => {
+      console.log(`Described: ${url}`);
       console.log(json1);
       console.log(`Description: ${json1.name}`);
       cb(json1.name);
