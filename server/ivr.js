@@ -55,14 +55,14 @@ const likePost = (twiml) => {
 };
 
 const commentOnPost = (twiml) => {
-  twiml.say('Recording a comment '
-    + 'on photo of DESCRIPTION At LOCATION on DATE at TIME by USERNAME, '
-    + 'after the beep. To end comment press the pound sign. ',
+  twiml.say('Please record your comment '
+    + 'after the beep. To end comment press star. ',
     { voice: 'alice', language: 'en-GB' });
   twiml.record({
     transcribe: true,
     transcribeCallback: '/ivr/save_comment',
     playBeep: true,
+    finishOnKey: '*',
   });
   twiml.gather({
     action: '/ivr/instagram_actions',
