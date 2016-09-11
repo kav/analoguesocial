@@ -4,7 +4,7 @@ const rootRef = Firebase.database().ref();
 const cookiesRef = rootRef.child('cookies');
 
 export const setCookie = (key, data) => {
-  const cookieRef = cookiesRef.child();
+  const cookieRef = cookiesRef.child(key);
   console.log(data);
   cookieRef.set(data);
   return cookieRef.key;
