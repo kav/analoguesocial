@@ -1,9 +1,5 @@
 import express from 'express';
 import twilio from 'twilio';
-import Firebase from 'firebase';
-
-const rootRef = Firebase.database().ref();
-const usersRef = rootRef.child('users');
 
 // import describeImage from './describe-image';
 
@@ -126,24 +122,20 @@ const redirectWelcome = () => {
 router.post('/welcome', twilio.webhook({ validate: false }), (request, response) => {
   // TODO: fetch user object from firebase
   // TODO: prime user's feed
-  usersRef.child(request.body.From).on('value', (snapshot) => {
-    const user = snapshot.val();
-    console.log(user);
-    console.log(snapshot);
-    const twiml = new twilio.TwimlResponse();
-    twiml.gather({
-      action: '/ivr/menu',
-      numDigits: '10',
-      method: 'POST',
-    }, (node) => {
-      node.say('Welcome to insta gram. Capture and Share the World\'s Moments, ' +
+
+  const twiml = new twilio.TwimlResponse();
+  twiml.gather({
+    action: '/ivr/menu',
+    numDigits: '10',
+    method: 'POST',
+  }, (node) => {
+    node.say('Welcome to insta gram. Capture and Share the World\'s Moments, ' +
         'Brought to you by Analogue Social. ' +
         'surfing the information superhighway at the pace of yesterday. ' +
         'To view your Insta gram feed, please press 1. ' +
         'If you are on a rotary telephone please hold for an operator.');
-    });
-    return response.send(twiml);
   });
+  return response.send(twiml);
 });
 
 // POST: '/ivr/menu'
