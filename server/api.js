@@ -6,7 +6,7 @@ import Firebase from 'firebase';
 const router = express.Router();
 
 const rootRef = Firebase.database().ref();
-const usersRef = rootRef.child("users");
+const usersRef = rootRef.child('users');
 
 const fetchFollows = (tel, snapshot, cb) => {
   const user = snapshot[tel];
@@ -14,18 +14,18 @@ const fetchFollows = (tel, snapshot, cb) => {
   fetch(apiUrl)
     .then((response) => response.json())
     .then((json) => cb(json));
-}
+};
 
 router.get('/follows', (req, res) => {
   const tel = req.query.tel;
 
-  usersRef.on("value", function(snapshot) {
+  usersRef.once('value', (snapshot) => {
     console.log(snapshot.val());
-    fetchFollows(tel, snapshot.val(), function(response){
+    fetchFollows(tel, snapshot.val(), (response) => {
       res.send(response);
     });
-  }, function (errorObject) {
-    console.log("The read failed: " + errorObject.code);
+  }, (errorObject) => {
+    console.log('The read failed: ' + errorObject.code);
   });
 });
 

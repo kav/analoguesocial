@@ -28,7 +28,7 @@ export const getIgData = (phone, cb) => {
 
 export const getPostForUser = (user, index, cb) => {
   const userRef = postsRef.child(user);
-  userRef.on('value', (snapshot) => {
+  userRef.once('value', (snapshot) => {
     const posts = Object.values(snapshot.val());
     const post = posts[index];
     cb(post);
