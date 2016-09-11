@@ -41,6 +41,10 @@ const viewPost = (twiml) => {
   });
   return twiml;
 };
+const nextPost = (twiml) => {
+  // TODO: advance post to next post
+  return viewPost(twiml);
+};
 
 const viewProfile = (twiml) => {
   twiml.gather({
