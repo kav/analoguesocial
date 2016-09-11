@@ -1,9 +1,10 @@
 import Firebase from 'firebase';
 import { PhoneNumberFormat, PhoneNumberUtil } from 'google-libphonenumber';
-
+import { InstagramPosts } from 'instagram-screen-scrape';
 
 const rootRef = Firebase.database().ref();
 const usersRef = rootRef.child('users');
+const postsRef = rootRef.child('posts');
 
 export const formatPhone = (phone) => {
   const phoneUtil = PhoneNumberUtil.getInstance();
@@ -18,5 +19,30 @@ export const getIgData = (phone, cb) => {
   usersRef.child(formattedPhone).on('value', (snapshot) => {
     const user = snapshot.val();
     cb(user);
+  });
+};
+
+export const getPostForUser = (user, index, cb) => {
+  const userRef = postsRef.child(user);
+  const postRef = userRef.child(index);
+  postRef.on('value', (snapshot) => {
+    const post = snapshot.val();
+    cb(post);
+  });
+};
+
+export const precacheIgPosts = (username) => {
+  let counter = 0;
+  const user = username;
+  const userRef = postsRef.child(user);
+
+  const streamOfPosts = new InstagramPosts({
+    username: user,
+  });
+  streamOfPosts.on('data', (post) => {
+    if (counter < 5) {
+      userRef.child(counter).set(post);
+      counter++;
+    }
   });
 };

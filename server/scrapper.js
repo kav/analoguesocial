@@ -22,8 +22,8 @@ router.get('/:user', (req, res, next) => {
     if (counter > 5) {
       return res.send();
     }
-    counter++;
     userRef.child(counter).set(post);
+    counter++;
   });
 });
 
