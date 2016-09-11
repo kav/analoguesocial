@@ -1,6 +1,7 @@
 import Firebase from 'firebase';
 import { PhoneNumberFormat, PhoneNumberUtil } from 'google-libphonenumber';
 import { InstagramPosts } from 'instagram-screen-scrape';
+import descriptionFromImage from './description-from-image';
 
 const rootRef = Firebase.database().ref();
 const usersRef = rootRef.child('users');
@@ -40,9 +41,13 @@ export const precacheIgPosts = (username) => {
     username: user,
   });
   streamOfPosts.on('data', (post) => {
-    if (counter < 5) {
-      userRef.child(counter).set(post);
-      counter++;
-    }
+    if (post.type !== 'image') return;
+    descriptionFromImage(post.media, (description) => {
+      post.description = description;
+      if (counter < 5) {
+        userRef.child(counter).set(post);
+        counter++;
+      }
+    });
   });
 };

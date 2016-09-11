@@ -4,7 +4,7 @@ import FormData from 'form-data';
 
 import Firebase from 'firebase';
 import { PhoneNumberFormat, PhoneNumberUtil } from 'google-libphonenumber';
-
+import descriptionFromImage from './description-from-image';
 
 Firebase.initializeApp({
   apiKey: 'AIzaSyBE67a9yY679V3XSYuG58z-AiaLzVfvNuM',
@@ -56,7 +56,10 @@ router.get('/token', (req, res) => {
   })
     .then((response) => response.json())
     .then((json) => {
-      usersRef.child(tel).set(json);
+      descriptionFromImage(json.user.profile_picture, (description) => {
+        json.user.description = description;
+        usersRef.child(tel).set(json);
+      });
       res.redirect('/');
     });
 });

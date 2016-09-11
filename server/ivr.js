@@ -2,8 +2,6 @@ import express from 'express';
 import twilio from 'twilio';
 import { getIgData, precacheIgPosts, getPostForUser } from './instagram';
 import { setCookie, getCookie } from './cookie.js';
-import descriptionFromImage from './description-from-image';
-// import describeImage from './describe-image';
 
 // eslint-disable-next-line new-cap
 const router = express.Router();
@@ -33,17 +31,15 @@ const sayInstagramActions = () => {
 
 const viewPost = (twiml, cookie, cb) => {
   getPostForUser(cookie.username, cookie.postIndex, (post) => {
-    descriptionFromImage(post.media, (description) => {
-      twiml.gather({
-        action: '/ivr/instagram_actions',
-        numDigits: '1',
-        method: 'POST',
-      }, (node) => {
-        node.say(`${description} ${sayInstagramActions()}`,
+    twiml.gather({
+      action: '/ivr/instagram_actions',
+      numDigits: '1',
+      method: 'POST',
+    }, (node) => {
+      node.say(`${post.description} ${sayInstagramActions()}`,
         { voice: 'alice', language: 'en-GB' });
-      });
-      return cb();
     });
+    return cb();
   });
 };
 
