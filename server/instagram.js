@@ -1,13 +1,11 @@
 import Firebase from 'firebase';
+import fetch from 'node-fetch';
+import FormData from 'form-data';
 import { PhoneNumberFormat, PhoneNumberUtil } from 'google-libphonenumber';
 import { InstagramPosts } from 'instagram-screen-scrape';
-import { instagram } from 'instagram-node';
 
 import descriptionFromImage from './description-from-image';
 
-const ig = instagram();
-ig.use({ client_id: '9b6c05b9a31643ea9abcd7651f7a6bd2',
-         client_secret: 'dc67648b48f3412b92a02e6bd817b68f' });
 const rootRef = Firebase.database().ref();
 const usersRef = rootRef.child('users');
 const postsRef = rootRef.child('posts');
@@ -37,10 +35,16 @@ export const getPostForUser = (user, index, cb) => {
   });
 };
 export const likePost = (user, index, token) => {
-  ig.use({ access_token: token });
   getPostForUser(user, index, (post) => {
-    console.log(post);
-    console.log(ig.add_like(post.id));
+    const body = new FormData();
+    body.append('access_token', token);
+    fetch(`https://api.instagram.com/v1/media/shortcode/${post.id}?access_token=${token}`)
+    .then().then((resp) => resp.json()).then((json) => {
+      fetch(`https://api.instagram.com/v1/media/${json.data.id}/likes`, {
+        method: 'POST',
+        body,
+      }).then((resp) => resp.json()).then(console.log);
+    });
   });
 };
 export const precacheIgPosts = (username) => {
