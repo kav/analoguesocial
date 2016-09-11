@@ -154,7 +154,7 @@ router.post('/instagram_actions', twilio.webhook({ validate: false }), (request,
 
 // POST: '/ivr/save_comment'
 router.post('/save_comment', twilio.webhook({ validate: false }), (request, response) => {
-  console.log(request);
+  console.log(`Comment Transcription: ${request.body.TranscriptionText}`);
   return response.send(200);
 });
 export default router;
