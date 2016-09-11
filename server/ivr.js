@@ -161,9 +161,10 @@ router.post('/menu', twilio.webhook({ validate: false }), (request, response) =>
       const twiml = new twilio.TwimlResponse();
       optionActions[selectedOption](twiml, cookie, () => response.send(twiml));
       return;
+    } else {
+      response.send(redirectWelcome());
+      return;
     }
-    response.send(redirectWelcome());
-    return;
   });
 });
 
