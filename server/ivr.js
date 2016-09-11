@@ -55,20 +55,20 @@ const likePost = (twiml) => {
 };
 
 const commentOnPost = (twiml) => {
+  twiml.say('Recording a comment '
+    + 'on photo of DESCRIPTION At LOCATION on DATE at TIME by USERNAME, '
+    + 'after the beep. To end comment press the pound sign. ',
+    { voice: 'alice', language: 'en-GB' });
+  twiml.record({
+    transcribe: true,
+    transcribeCallback: '/ivr/save_comment',
+    playBeep: true,
+  });
   twiml.gather({
     action: '/ivr/instagram_actions',
     numDigits: '1',
     method: 'POST',
   }, (node) => {
-    node.say('Recording a comment '
-    + 'on photo of DESCRIPTION At LOCATION on DATE at TIME by USERNAME, '
-    + 'after the beep. To end comment press the pound sign. ',
-    { voice: 'alice', language: 'en-GB' });
-    node.record({
-      transcribe: true,
-      transcribeCallback: '/ivr/save_comment',
-      playBeep: true,
-    });
     node.say(`Comment saved. ${sayInstagramActions()}`,
     { voice: 'alice', language: 'en-GB' });
   });
