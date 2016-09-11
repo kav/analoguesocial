@@ -170,6 +170,7 @@ router.post('/menu', twilio.webhook({ validate: false }), (request, response) =>
 // POST: '/ivr/instagram_actions'
 router.post('/instagram_actions', twilio.webhook({ validate: false }), (request, response) => {
   const selectedOption = request.body.Digits;
+  console.log(`User pressed: ${selectedOption}`);
   getCookie(request.body.From, (cookie) => {
     const optionActions = {
       1: likePost,
@@ -188,7 +189,10 @@ router.post('/instagram_actions', twilio.webhook({ validate: false }), (request,
     };
     if (optionActions[selectedOption]) {
       const twiml = new twilio.TwimlResponse();
-      optionActions[selectedOption](twiml, cookie, () => response.send(twiml));
+      optionActions[selectedOption](twiml, cookie, () => {
+        console.log('about to respond');
+        response.send(twiml);
+      });
       return;
     }
     response.send(redirectWelcome());
