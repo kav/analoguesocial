@@ -33,16 +33,17 @@ const sayInstagramActions = () => {
 
 const viewPost = (twiml, cookie, cb) => {
   getPostForUser(cookie.username, cookie.postIndex, (post) => {
-    twiml.gather({
-      action: '/ivr/instagram_actions',
-      numDigits: '1',
-      method: 'POST',
-    }, (node) => {
-      // TODO: load photo here
-      node.say(`${descriptionFromImage(post.media)} ${sayInstagramActions()}`,
-      { voice: 'alice', language: 'en-GB' });
+    descriptionFromImage(post.media, (description) => {
+      twiml.gather({
+        action: '/ivr/instagram_actions',
+        numDigits: '1',
+        method: 'POST',
+      }, (node) => {
+        node.say(`${description} ${sayInstagramActions()}`,
+        { voice: 'alice', language: 'en-GB' });
+      });
+      return cb();
     });
-    return cb();
   });
 };
 
@@ -53,11 +54,13 @@ const viewProfile = (twiml, cookie, cb) => {
     method: 'POST',
   }, (node) => {
     // TODO: load profile stuff here
-    node.say(`${cookie.bio}. Profile photo shows ${descriptionFromImage(cookie.profileImage)}`
-    + `${sayInstagramActions()}`,
-    { voice: 'alice', language: 'en-GB' });
+    descriptionFromImage(cookie.profileImage, (description) => {
+      node.say(`${cookie.bio}. Profile photo shows ${description}`
+      + `${sayInstagramActions()}`,
+      { voice: 'alice', language: 'en-GB' });
+      return cb();
+    });
   });
-  return cb();
 };
 
 const likePost = (twiml, cookie, cb) => {
