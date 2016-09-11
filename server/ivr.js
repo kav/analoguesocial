@@ -1,6 +1,7 @@
 import express from 'express';
 import twilio from 'twilio';
 import { getIgData, precacheIgPosts, getPostForUser } from './instagram';
+import { setCookie, getCookie } from './cookie.js';
 import descriptionFromImage from './description-from-image';
 // import describeImage from './describe-image';
 
@@ -141,7 +142,7 @@ router.post('/welcome', twilio.webhook({ validate: false }), (request, response)
       token: igData.token,
       username: igData.user.username,
     };
-    response.set('Set-Cookie', JSON.stringify(cookie));
+    response.set('Set-Cookie', setCookie(cookie));
     return response.send(twiml);
   });
 });
