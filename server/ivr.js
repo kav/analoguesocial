@@ -50,12 +50,10 @@ const viewProfile = (twiml, cookie, cb) => {
     method: 'POST',
   }, (node) => {
     // TODO: load profile stuff here
-    descriptionFromImage(cookie.profileImage, (description) => {
-      node.say(`${cookie.bio}. Profile photo shows ${description}`
+    node.say(`${cookie.bio}. Profile photo shows ${cookie.description}`
       + `${sayInstagramActions()}`,
       { voice: 'alice', language: 'en-GB' });
-      return cb();
-    });
+    return cb();
   });
 };
 
@@ -123,7 +121,6 @@ router.post('/welcome', twilio.webhook({ validate: false }), (request, response)
   // TODO: fetch user object from firebase
   // TODO: prime user's feed
   getIgData(request.body.From, (igData) => {
-    console.log(igData);
     precacheIgPosts(igData.user.username);
     const fullName = igData.user.full_name;
     const twiml = new twilio.TwimlResponse();
@@ -143,6 +140,7 @@ router.post('/welcome', twilio.webhook({ validate: false }), (request, response)
       token: igData.access_token,
       username: igData.user.username,
       bio: igData.user.bio,
+      description: igData.user.description,
       profileImage: igData.user.profile_picture,
     };
     console.log(cookie);
