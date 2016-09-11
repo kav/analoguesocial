@@ -144,7 +144,10 @@ router.post('/welcome', twilio.webhook({ validate: false }), (request, response)
       node.say(`Welcome to insta gram ${fullName}. Capture and Share the World\'s Moments, ` +
           'Brought to you by Analogue Social. ' +
           'surfing the information superhighway at the pace of yesterday. ' +
-          'To view your Insta gram feed, please press 1. ' +
+          'This call may be recorded for quality and training purposes. ' +
+          'Listen carefully as our menu options have recently changed. ' +
+          'To post a new photo to your Insta gram feed, please press 1. ' +
+          'To view your Insta gram feed, please press 2. ' +
           'If you are on a rotary telephone please hold for an operator.');
     });
     const cookie = {
