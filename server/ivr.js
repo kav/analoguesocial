@@ -36,8 +36,10 @@ const viewPost = (twiml, cookie, cb) => {
       numDigits: '1',
       method: 'POST',
     }, (node) => {
-      node.say(`${post.description} ${sayInstagramActions()}`,
+      node.say(post.description,
         { voice: 'alice', language: 'en-GB' });
+      node.pause();
+      node.say(sayInstagramActions(), { voice: 'alice', language: 'en-GB' });
     });
     return cb(twiml);
   });
