@@ -3,12 +3,14 @@ import express from 'express';
 import bodyParser from 'body-parser';
 import signUp from './sign-up';
 import ivr from './ivr';
+import api from './api';
 
 const app = express();
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
+app.use('/api', api);
 app.use('/ivr', ivr);
 
 app.use(express.static('./static'));

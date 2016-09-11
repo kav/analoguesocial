@@ -2,15 +2,15 @@ import express from 'express';
 import fetch from 'node-fetch';
 import FormData from 'form-data';
 
-var firebase = require('firebase');
+import Firebase from 'firebase';
 
-firebase.initializeApp({
+Firebase.initializeApp({
   apiKey: "AIzaSyBE67a9yY679V3XSYuG58z-AiaLzVfvNuM",
   authDomain: "analoguesocial.firebaseapp.com",
   databaseURL: "https://analoguesocial.firebaseio.com",
   storageBucket: "analoguesocial.appspot.com",
 });
-const rootRef = firebase.database().ref();
+const rootRef = Firebase.database().ref();
 
 
 const usersRef = rootRef.child("users");
@@ -19,7 +19,6 @@ const usersRef = rootRef.child("users");
 const router = express.Router();
 
 router.post('/', (req, res, ) => {
-  console.log('REQ MADE');
   const envUrl = `http://${req.headers.host}/signup/token?tel=${req.body.number}`;
   res.redirect('https://api.instagram.com/oauth/authorize/' +
   '?client_id=9b6c05b9a31643ea9abcd7651f7a6bd2' +
