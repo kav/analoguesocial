@@ -24,27 +24,31 @@ router.post('/', (req, res, ) => {
   const phoneUtil = PhoneNumberUtil.getInstance();
   const phoneNumber = phoneUtil.parse(req.body.number, 'US');
   const tel = phoneUtil.format(phoneNumber, PhoneNumberFormat.E164);
-
-  const envUrl = `http://${req.headers.host}/signup/token?tel=${tel}`;
-  res.redirect('https://api.instagram.com/oauth/authorize/' +
+  const igBugAvoidTel = tel.substring(1);
+  const envUrl = `http://${req.headers.host}/signup/token?tel=${igBugAvoidTel}`;
+  const redirectUri = 'https://api.instagram.com/oauth/authorize/' +
   '?client_id=9b6c05b9a31643ea9abcd7651f7a6bd2' +
   '&scope=follower_list+likes+comments' +
-  `&redirect_uri=${envUrl}` +
-  '&response_type=code');
+  '&response_type=code' +
+  `&redirect_uri=${envUrl}`;
+  res.redirect(redirectUri);
 });
 
 router.get('/token', (req, res) => {
   const code = req.query.code;
   const phoneUtil = PhoneNumberUtil.getInstance();
-  const phoneNumber = phoneUtil.parse(req.query.tel, 'US');
+  const decodedTel = req.query.tel;
+  const phoneNumber = phoneUtil.parse(decodedTel, 'US');
   const tel = phoneUtil.format(phoneNumber, PhoneNumberFormat.E164);
+  const igBugAvoidTel = tel.substring(1);
+  const redirectUri = `http://${req.headers.host}/signup/token?tel=${igBugAvoidTel}`;
 
   const body = new FormData();
   body.append('client_id', '9b6c05b9a31643ea9abcd7651f7a6bd2');
   body.append('client_secret', 'dc67648b48f3412b92a02e6bd817b68f');
   body.append('code', code);
   body.append('grant_type', 'authorization_code');
-  body.append('redirect_uri', `http://${req.headers.host}/signup/token?tel=${tel}`);
+  body.append('redirect_uri', redirectUri);
 
   fetch('https://api.instagram.com/oauth/access_token', {
     method: 'POST',
@@ -52,8 +56,6 @@ router.get('/token', (req, res) => {
   })
     .then((response) => response.json())
     .then((json) => {
-      console.log(json);
-
       usersRef.child(tel).set(json);
       res.redirect('/');
     });
