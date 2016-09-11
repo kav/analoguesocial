@@ -17,3 +17,5 @@ export const getCookie = (key, cb) => {
     return cb(cookie);
   });
 };
+
+// getCookie(setCookie({ token: 'test' }), console.log);

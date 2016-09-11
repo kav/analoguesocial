@@ -143,7 +143,10 @@ router.post('/welcome', twilio.webhook({ validate: false }), (request, response)
       token: igData.token,
       username: igData.user.username,
     };
-    response.set('Set-Cookie', setCookie(cookie));
+    console.log(cookie);
+    const cookieKey = setCookie(cookie);
+    console.log(cookieKey);
+    response.set('Set-Cookie', cookieKey);
     return response.send(twiml);
   });
 });
