@@ -21,7 +21,11 @@ const usersRef = rootRef.child('users');
 const router = express.Router();
 
 router.post('/', (req, res, ) => {
-  const envUrl = `http://${req.headers.host}/signup/token?tel=${req.body.number}`;
+  const phoneUtil = PhoneNumberUtil.getInstance();
+  const phoneNumber = phoneUtil.parse(req.body.number, 'US');
+  const tel = phoneUtil.format(phoneNumber, PhoneNumberFormat.E164);
+
+  const envUrl = `http://${req.headers.host}/signup/token?tel=${tel}`;
   res.redirect('https://api.instagram.com/oauth/authorize/' +
   '?client_id=9b6c05b9a31643ea9abcd7651f7a6bd2' +
   '&scope=follower_list+likes+comments' +
