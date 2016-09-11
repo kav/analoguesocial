@@ -5,9 +5,11 @@ import twilio from 'twilio';
 
 // eslint-disable-next-line new-cap
 const router = express.Router();
+
 const notImpl = (twiml) => {
   twiml.say('Functionality not implemented. Goodbye.');
   twiml.hangup();
+  return twiml;
 };
 
 const sayInstagramActions = () => {
@@ -25,6 +27,7 @@ const sayInstagramActions = () => {
   ];
   return actions.join('. ');
 };
+
 const viewPost = (twiml) => {
   twiml.gather({
     action: '/ivr/instagram_actions',
@@ -109,7 +112,7 @@ router.post('/welcome', twilio.webhook({ validate: false }), (request, response)
       'To view your Insta gram feed, please press 1. ' +
       'If you are on a rotary telephone please hold for an operator.');
   });
-  response.send(twiml);
+  return response.send(twiml);
 });
 
 // POST: '/ivr/menu'
@@ -122,9 +125,9 @@ router.post('/menu', twilio.webhook({ validate: false }), (request, response) =>
   if (optionActions[selectedOption]) {
     const twiml = new twilio.TwimlResponse();
     optionActions[selectedOption](twiml);
-    response.send(twiml);
+    return response.send(twiml);
   }
-  response.send(redirectWelcome());
+  return response.send(redirectWelcome());
 });
 
 // POST: '/ivr/instagram_actions'
@@ -144,14 +147,14 @@ router.post('/instagram_actions', twilio.webhook({ validate: false }), (request,
   if (optionActions[selectedOption]) {
     const twiml = new twilio.TwimlResponse();
     twiml.dial(optionActions[selectedOption]);
-    response.send(twiml);
+    return response.send(twiml);
   }
-  response.send(redirectWelcome());
+  return response.send(redirectWelcome());
 });
 
 // POST: '/ivr/save_comment'
 router.post('/save_comment', twilio.webhook({ validate: false }), (request, response) => {
   console.log(request);
-  response.send(200);
+  return response.send(200);
 });
 export default router;
