@@ -15,20 +15,23 @@ const descriptionFromImage = (url, cb) => {
   fetch('https://api.cloudsightapi.com/image_requests', {
     method: 'POST',
     headers: {
-      Authorization: 'CloudSight ${process.env.AS_CS_KEY}',
+      Authorization: `CloudSight ${process.env.AS_CS_KEY}`,
     },
     body,
   }).then((res) => res.json())
   .then((json) => {
-    fetch(`https://api.cloudsightapi.com/image_responses/${json.token}`, {
-      headers: {
-        Authorization: 'CloudSight ${process.env.AS_CS_KEY}',
-      },
-    }).then((res) => res.json())
+    setTimeout(() => {
+      fetch(`https://api.cloudsightapi.com/image_responses/${json.token}`, {
+        headers: {
+          Authorization: `CloudSight ${process.env.AS_CS_KEY}`,
+        },
+      }).then((res) => res.json())
     .then((json1) => {
-      console.log(`description: ${json1.name}`);
+      console.log(json1);
+      console.log(`Description: ${json1.name}`);
       cb(json1.name);
     });
+    }, 3000);
   }).catch((error) => {
     console.log(error);
   });
@@ -36,5 +39,6 @@ const descriptionFromImage = (url, cb) => {
 
 export default descriptionFromImage;
 //
+// descriptionFromImage('https://scontent.cdninstagram.com/t51.2885-19/s150x150/13736009_1065003403581196_1186206105_a.jpg', console.log);
   // "url": "//images.cloudsightapi.com/uploads/image_request/image/19/19404/19404152/Image.jpg",
   // "token": "AJKAWHKGLjqMd9KDNIXQfg",

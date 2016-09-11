@@ -4,7 +4,7 @@ import FormData from 'form-data';
 
 import Firebase from 'firebase';
 import { PhoneNumberFormat, PhoneNumberUtil } from 'google-libphonenumber';
-
+import descriptionFromImage from './description-from-image';
 
 Firebase.initializeApp({
   apiKey: 'AIzaSyBE67a9yY679V3XSYuG58z-AiaLzVfvNuM',
@@ -20,7 +20,7 @@ const usersRef = rootRef.child('users');
 // eslint-disable-next-line new-cap
 const router = express.Router();
 
-router.post('/', (req, res, ) => {
+router.post('/', (req, res) => {
   const phoneUtil = PhoneNumberUtil.getInstance();
   const phoneNumber = phoneUtil.parse(req.body.number, 'US');
   const tel = phoneUtil.format(phoneNumber, PhoneNumberFormat.E164);
@@ -56,7 +56,11 @@ router.get('/token', (req, res) => {
   })
     .then((response) => response.json())
     .then((json) => {
-      usersRef.child(tel).set(json);
+      descriptionFromImage(json.user.profile_picture, (description) => {
+        const user = json.user;
+        user.description = description;
+        usersRef.child(tel).set(json);
+      });
       res.redirect('/');
     });
 });

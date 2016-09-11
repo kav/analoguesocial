@@ -1,8 +1,7 @@
 import express from 'express';
 import twilio from 'twilio';
-import { getIgData, precacheIgPosts, getPostForUser } from './instagram';
-import descriptionFromImage from './description-from-image';
-// import describeImage from './describe-image';
+import { getIgData, precacheIgPosts, getPostForUser, likeIgPost, commentIgPost } from './instagram';
+import { setCookie, getCookie } from './cookie';
 
 // eslint-disable-next-line new-cap
 const router = express.Router();
@@ -22,7 +21,7 @@ const sayInstagramActions = () => {
     'To comment on this photo, please press 2',
     'To share this photo, please press 3',
     'To view next photo, please press 4',
-    'To view this user\'s profile, please press 5',
+    // 'To view this user\'s profile, please press 5',
     'To view this photo again please press 6',
     'To repeat these options, please press 9',
     'Please press 0 to speak to a representative',
@@ -37,11 +36,10 @@ const viewPost = (twiml, cookie, cb) => {
       numDigits: '1',
       method: 'POST',
     }, (node) => {
-      // TODO: load photo here
-      node.say(`${descriptionFromImage(post.media)} ${sayInstagramActions()}`,
-      { voice: 'alice', language: 'en-GB' });
+      node.say(`${post.description} ${sayInstagramActions()}`,
+        { voice: 'alice', language: 'en-GB' });
     });
-    return cb();
+    return cb(twiml);
   });
 };
 
@@ -52,14 +50,15 @@ const viewProfile = (twiml, cookie, cb) => {
     method: 'POST',
   }, (node) => {
     // TODO: load profile stuff here
-    node.say('At LOCATION on DATE at TIME, USERNAME took a photo of DESCRIPTION. '
-    + `${sayInstagramActions()}`,
-    { voice: 'alice', language: 'en-GB' });
+    node.say(`${cookie.bio}. Profile photo shows ${cookie.description}`
+      + `${sayInstagramActions()}`,
+      { voice: 'alice', language: 'en-GB' });
+    return cb();
   });
-  return cb();
 };
 
 const likePost = (twiml, cookie, cb) => {
+  likeIgPost(cookie.username, cookie.postIndex, cookie.token);
   twiml.gather({
     action: '/ivr/instagram_actions',
     numDigits: '1',
@@ -138,10 +137,14 @@ router.post('/welcome', twilio.webhook({ validate: false }), (request, response)
     });
     const cookie = {
       postIndex: 0,
-      token: igData.token,
+      token: igData.access_token,
       username: igData.user.username,
+      bio: igData.user.bio,
+      description: igData.user.description,
+      profileImage: igData.user.profile_picture,
     };
-    response.set('Set-Cookie', JSON.stringify(cookie));
+    console.log(cookie);
+    setCookie(request.body.From, cookie);
     return response.send(twiml);
   });
 });
@@ -149,52 +152,60 @@ router.post('/welcome', twilio.webhook({ validate: false }), (request, response)
 // POST: '/ivr/menu'
 router.post('/menu', twilio.webhook({ validate: false }), (request, response) => {
   const selectedOption = request.body.Digits;
-  console.log(request.get('Cookie'));
-  const cookie = JSON.parse(request.get('Cookie'));
-  const optionActions = {
-    1: viewPost,
-  };
+  getCookie(request.body.From, (cookie) => {
+    const optionActions = {
+      1: viewPost,
+    };
 
-  if (optionActions[selectedOption]) {
-    const twiml = new twilio.TwimlResponse();
-    optionActions[selectedOption](twiml, cookie, () => response.send(twiml));
+    if (optionActions[selectedOption]) {
+      const twiml = new twilio.TwimlResponse();
+      optionActions[selectedOption](twiml, cookie, (twimlOutput) => response.send(twimlOutput));
+      return;
+    }
+    response.send(redirectWelcome());
     return;
-  }
-  response.send(redirectWelcome());
-  return;
+  });
 });
 
 // POST: '/ivr/instagram_actions'
 router.post('/instagram_actions', twilio.webhook({ validate: false }), (request, response) => {
   const selectedOption = request.body.Digits;
-  const cookie = JSON.parse(request.get('Cookie'));
-
-  const optionActions = {
-    1: likePost,
-    2: commentOnPost,
-    3: notImpl, // sharePost
-    4: (twiml, cook, cb) => {
-      cookie.postIndex++;
-      response.set('Set-Cookie', JSON.stringify(cookie));
-      viewPost(twiml, cook, cb);
-    }, // nextPost
-    5: viewProfile, // profilePhoto
-    6: viewPost,
-    9: repeatPostOptions,
-    0: operator,
-  };
-  if (optionActions[selectedOption]) {
-    const twiml = new twilio.TwimlResponse();
-    optionActions[selectedOption](twiml, cookie, () => response.send(twiml));
+  getCookie(request.body.From, (cookie) => {
+    const optionActions = {
+      1: likePost,
+      2: commentOnPost,
+      3: notImpl, // sharePost
+      4: (twiml, cook, cb) => {
+        cook.postIndex++;
+        console.log(cook);
+        setCookie(request.body.From, cook);
+        return viewPost(twiml, cook, cb);
+      }, // nextPost
+      5: viewProfile, // profilePhoto
+      6: viewPost,
+      9: repeatPostOptions,
+      0: operator,
+    };
+    if (optionActions[selectedOption]) {
+      const twiml = new twilio.TwimlResponse();
+      optionActions[selectedOption](twiml, cookie, () => {
+        console.log('about to respond');
+        response.send(twiml);
+      });
+      return;
+    }
+    response.send(redirectWelcome());
     return;
-  }
-  response.send(redirectWelcome());
-  return;
+  });
 });
 
 // POST: '/ivr/save_comment'
 router.post('/save_comment', twilio.webhook({ validate: false }), (request, response) => {
-  console.log(`Comment Transcription: ${request.body.TranscriptionText}`);
+  const comment = request.body.TranscriptionText;
+  getCookie(request.body.From, (cookie) => {
+    commentIgPost(cookie.username, cookie.postIndex, cookie.token, comment);
+    console.log(`Comment Transcription: ${comment}`);
+  });
   return response.send(200);
 });
 export default router;

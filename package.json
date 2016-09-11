@@ -4,7 +4,7 @@
   "description": "Social Media, for your phone",
   "main": "server/server.js",
   "scripts": {
-    "start": "./node_modules/.bin/nodemon -w server/ --exec babel-node -- server/server.js",
+    "start": "./node_modules/.bin/nodemon --exec babel-node -- server/server.js",
     "lint": "eslint server --ext js --fix"
   },
   "repository": {
@@ -68,6 +68,7 @@
     "firebase": "^3.3.2",
     "form-data": "^1.0.1",
     "google-libphonenumber": "^1.1.0",
+    "instagram-node": "^0.5.8",
     "instagram-screen-scrape": "^2.0.0",
     "jest-cli": "^14.1.0",
     "json-loader": "^0.5.4",
