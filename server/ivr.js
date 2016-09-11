@@ -140,15 +140,13 @@ router.post('/welcome', twilio.webhook({ validate: false }), (request, response)
     });
     const cookie = {
       postIndex: 0,
-      // token: igData.token,
+      token: igData.access_token,
       username: igData.user.username,
       bio: igData.user.bio,
       profileImage: igData.user.profile_picture,
     };
     console.log(cookie);
-    const cookieKey = setCookie(cookie);
-    console.log(cookieKey);
-    response.set('Set-Cookie', cookieKey);
+    setCookie(request.body.From, cookie);
     return response.send(twiml);
   });
 });
@@ -156,47 +154,47 @@ router.post('/welcome', twilio.webhook({ validate: false }), (request, response)
 // POST: '/ivr/menu'
 router.post('/menu', twilio.webhook({ validate: false }), (request, response) => {
   const selectedOption = request.body.Digits;
-  console.log(request.get('Cookie'));
-  const cookie = JSON.parse(request.get('Cookie'));
-  const optionActions = {
-    1: viewPost,
-  };
+  getCookie(request.body.From, (cookie) => {
+    const optionActions = {
+      1: viewPost,
+    };
 
-  if (optionActions[selectedOption]) {
-    const twiml = new twilio.TwimlResponse();
-    optionActions[selectedOption](twiml, cookie, () => response.send(twiml));
+    if (optionActions[selectedOption]) {
+      const twiml = new twilio.TwimlResponse();
+      optionActions[selectedOption](twiml, cookie, () => response.send(twiml));
+      return;
+    }
+    response.send(redirectWelcome());
     return;
-  }
-  response.send(redirectWelcome());
-  return;
+  });
 });
 
 // POST: '/ivr/instagram_actions'
 router.post('/instagram_actions', twilio.webhook({ validate: false }), (request, response) => {
   const selectedOption = request.body.Digits;
-  const cookie = JSON.parse(request.get('Cookie'));
-
-  const optionActions = {
-    1: likePost,
-    2: commentOnPost,
-    3: notImpl, // sharePost
-    4: (twiml, cook, cb) => {
-      cookie.postIndex++;
-      response.set('Set-Cookie', JSON.stringify(cookie));
-      viewPost(twiml, cook, cb);
-    }, // nextPost
-    5: viewProfile, // profilePhoto
-    6: viewPost,
-    9: repeatPostOptions,
-    0: operator,
-  };
-  if (optionActions[selectedOption]) {
-    const twiml = new twilio.TwimlResponse();
-    optionActions[selectedOption](twiml, cookie, () => response.send(twiml));
+  getCookie(request.body.From, (cookie) => {
+    const optionActions = {
+      1: likePost,
+      2: commentOnPost,
+      3: notImpl, // sharePost
+      4: (twiml, cook, cb) => {
+        cook.postIndex++;
+        setCookie(request.body.From, cook);
+        viewPost(twiml, cook, cb);
+      }, // nextPost
+      5: viewProfile, // profilePhoto
+      6: viewPost,
+      9: repeatPostOptions,
+      0: operator,
+    };
+    if (optionActions[selectedOption]) {
+      const twiml = new twilio.TwimlResponse();
+      optionActions[selectedOption](twiml, cookie, () => response.send(twiml));
+      return;
+    }
+    response.send(redirectWelcome());
     return;
-  }
-  response.send(redirectWelcome());
-  return;
+  });
 });
 
 // POST: '/ivr/save_comment'

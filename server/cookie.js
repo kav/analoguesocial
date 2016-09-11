@@ -3,8 +3,8 @@ import Firebase from 'firebase';
 const rootRef = Firebase.database().ref();
 const cookiesRef = rootRef.child('cookies');
 
-export const setCookie = (data) => {
-  const cookieRef = cookiesRef.push();
+export const setCookie = (key, data) => {
+  const cookieRef = cookiesRef.child();
   console.log(data);
   cookieRef.set(data);
   return cookieRef.key;
