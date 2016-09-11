@@ -146,7 +146,7 @@ router.post('/instagram_actions', twilio.webhook({ validate: false }), (request,
 
   if (optionActions[selectedOption]) {
     const twiml = new twilio.TwimlResponse();
-    twiml.dial(optionActions[selectedOption]);
+    optionActions[selectedOption](twiml);
     return response.send(twiml);
   }
   return response.send(redirectWelcome());
