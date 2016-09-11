@@ -60,6 +60,7 @@ const viewProfile = (twiml, cookie, cb) => {
 };
 
 const likePost = (twiml, cookie, cb) => {
+  likePost(cookie.username, cookie.postIndex, cookie.token);
   twiml.gather({
     action: '/ivr/instagram_actions',
     numDigits: '1',

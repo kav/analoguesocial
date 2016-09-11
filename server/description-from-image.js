@@ -27,9 +27,11 @@ const descriptionFromImage = (url, cb) => {
         },
       }).then((res) => res.json())
     .then((json1) => {
+      console.log(json1);
+      console.log(`Description: ${json1.name}`);
       cb(json1.name);
     });
-    }, 2000);
+    }, 3000);
   }).catch((error) => {
     console.log(error);
   });
@@ -37,6 +39,6 @@ const descriptionFromImage = (url, cb) => {
 
 export default descriptionFromImage;
 //
-descriptionFromImage('https://scontent.cdninstagram.com/t51.2885-19/s150x150/13736009_1065003403581196_1186206105_a.jpg', console.log);
+// descriptionFromImage('https://scontent.cdninstagram.com/t51.2885-19/s150x150/13736009_1065003403581196_1186206105_a.jpg', console.log);
   // "url": "//images.cloudsightapi.com/uploads/image_request/image/19/19404/19404152/Image.jpg",
   // "token": "AJKAWHKGLjqMd9KDNIXQfg",
