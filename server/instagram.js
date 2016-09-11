@@ -29,8 +29,10 @@ export const getIgData = (phone, cb) => {
 export const getPostForUser = (user, index, cb) => {
   const userRef = postsRef.child(user);
   userRef.once('value', (snapshot) => {
+    console.log(posts);
     const posts = Object.values(snapshot.val());
-    const post = posts[index];
+    const i = (posts.length > index ? index : 0);
+    const post = posts[i];
     cb(post);
   });
 };

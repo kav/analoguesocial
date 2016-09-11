@@ -73,7 +73,7 @@ const likePost = (twiml, cookie, cb) => {
 
 const commentOnPost = (twiml, cookie, cb) => {
   twiml.say('Please record your comment '
-    + 'after the beep. To end comment press star. ',
+    + 'after the beep, to end comment press star. ',
     { voice: 'alice', language: 'en-GB' });
   twiml.record({
     transcribe: true,
@@ -91,6 +91,28 @@ const commentOnPost = (twiml, cookie, cb) => {
   });
   return cb();
 };
+
+const postImage = (twiml, cookie, cb) => {
+  twiml.say('Please describe your image '
+    + 'after the beep, when finished press star ',
+    { voice: 'alice', language: 'en-GB' });
+  twiml.record({
+    transcribe: true,
+    transcribeCallback: '/ivr/save_post',
+    playBeep: true,
+    finishOnKey: '*',
+  });
+  twiml.gather({
+    action: '/ivr/instagram_actions',
+    numDigits: '1',
+    method: 'POST',
+  }, (node) => {
+    node.say(`Comment saved. ${sayInstagramActions()}`,
+    { voice: 'alice', language: 'en-GB' });
+  });
+  return cb();
+};
+
 
 const repeatPostOptions = (twiml, cookie, cb) => {
   twiml.gather({
@@ -154,7 +176,8 @@ router.post('/menu', twilio.webhook({ validate: false }), (request, response) =>
   const selectedOption = request.body.Digits;
   getCookie(request.body.From, (cookie) => {
     const optionActions = {
-      1: viewPost,
+      1: postImage,
+      2: viewPost,
     };
 
     if (optionActions[selectedOption]) {
@@ -208,4 +231,15 @@ router.post('/save_comment', twilio.webhook({ validate: false }), (request, resp
   });
   return response.send(200);
 });
+
+// POST: '/ivr/save_post'
+router.post('/save_post', twilio.webhook({ validate: false }), (request, response) => {
+  const comment = request.body.TranscriptionText;
+  getCookie(request.body.From, (cookie) => {
+    commentIgPost(cookie.username, cookie.postIndex, cookie.token, comment);
+    console.log(`Comment Transcription: ${comment}`);
+  });
+  return response.send(200);
+});
+
 export default router;
