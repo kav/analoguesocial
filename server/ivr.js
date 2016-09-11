@@ -201,11 +201,11 @@ router.post('/instagram_actions', twilio.webhook({ validate: false }), (request,
 
 // POST: '/ivr/save_comment'
 router.post('/save_comment', twilio.webhook({ validate: false }), (request, response) => {
-  console.log(request.body);
-  // const comment = request.body.TranscriptionText;
-  // commentIgPost(cookie.username, cookie.postIndex, cookie.token, comment);
-  //
-  // console.log(`Comment Transcription: ${comment}`);
+  const comment = request.body.TranscriptionText;
+  getCookie(request.body.From, (cookie) => {
+    commentIgPost(cookie.username, cookie.postIndex, cookie.token, comment);
+    console.log(`Comment Transcription: ${comment}`);
+  });
   return response.send(200);
 });
 export default router;
