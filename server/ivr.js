@@ -149,32 +149,33 @@ router.post('/welcome', twilio.webhook({ validate: false }), (request, response)
 // POST: '/ivr/menu'
 router.post('/menu', twilio.webhook({ validate: false }), (request, response) => {
   const selectedOption = request.body.Digits;
+  const cookie = JSON.parse(request.get('Cookie'));
   const optionActions = {
     1: viewPost,
   };
 
   if (optionActions[selectedOption]) {
     const twiml = new twilio.TwimlResponse();
-    optionActions[selectedOption](twiml, cookie, () => {
-      return response.send(twiml);
-    });
+    optionActions[selectedOption](twiml, cookie, () => response.send(twiml));
     return;
   }
-  return response.send(redirectWelcome());
+  response.send(redirectWelcome());
+  return;
 });
 
 // POST: '/ivr/instagram_actions'
 router.post('/instagram_actions', twilio.webhook({ validate: false }), (request, response) => {
   const selectedOption = request.body.Digits;
   const cookie = JSON.parse(request.get('Cookie'));
+
   const optionActions = {
     1: likePost,
     2: commentOnPost,
     3: notImpl, // sharePost
-    4: (twiml, cookie, cb) => {
+    4: (twiml, cook, cb) => {
       cookie.postIndex++;
       response.set('Set-Cookie', JSON.stringify(cookie));
-      viewPost(twiml, cookie, cb);
+      viewPost(twiml, cook, cb);
     }, // nextPost
     5: viewProfile, // profilePhoto
     6: viewPost,
@@ -183,9 +184,7 @@ router.post('/instagram_actions', twilio.webhook({ validate: false }), (request,
   };
   if (optionActions[selectedOption]) {
     const twiml = new twilio.TwimlResponse();
-    optionActions[selectedOption](twiml, cookie, () => {
-      return response.send(twiml);
-    });
+    optionActions[selectedOption](twiml, cookie, () => response.send(twiml));
     return;
   }
   response.send(redirectWelcome());
