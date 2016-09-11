@@ -104,7 +104,6 @@ const postImage = (twiml, cookie, cb) => {
   return cb(twiml);
 };
 
-
 const repeatPostOptions = (twiml, cookie, cb) => {
   twiml.gather({
     action: '/ivr/instagram_actions',
