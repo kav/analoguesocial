@@ -21,7 +21,7 @@ const sayInstagramActions = () => {
     'To comment on this photo, please press 2',
     'To share this photo, please press 3',
     'To view next photo, please press 4',
-    'To view this user\'s profile, please press 5',
+    // 'To view this user\'s profile, please press 5',
     'To view this photo again please press 6',
     'To repeat these options, please press 9',
     'Please press 0 to speak to a representative',
@@ -178,7 +178,7 @@ router.post('/instagram_actions', twilio.webhook({ validate: false }), (request,
       4: (twiml, cook, cb) => {
         cook.postIndex++;
         setCookie(request.body.From, cook);
-        viewPost(twiml, cook, cb);
+        return viewPost(twiml, cook, cb);
       }, // nextPost
       5: viewProfile, // profilePhoto
       6: viewPost,
