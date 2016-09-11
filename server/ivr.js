@@ -53,7 +53,7 @@ const viewProfile = (twiml, cookie, cb) => {
     node.say(`${cookie.bio}. Profile photo shows ${cookie.description}`
       + `${sayInstagramActions()}`,
       { voice: 'alice', language: 'en-GB' });
-    return cb();
+    return cb(twiml);
   });
 };
 
@@ -68,7 +68,7 @@ const likePost = (twiml, cookie, cb) => {
        `${sayInstagramActions()}`,
     { voice: 'alice', language: 'en-GB' });
   });
-  return cb();
+  return cb(twiml);
 };
 
 const commentOnPost = (twiml, cookie, cb) => {
@@ -89,12 +89,11 @@ const commentOnPost = (twiml, cookie, cb) => {
     node.say(`Comment saved. ${sayInstagramActions()}`,
     { voice: 'alice', language: 'en-GB' });
   });
-  return cb();
+  return cb(twiml);
 };
 
 const postImage = (twiml, cookie, cb) => {
-  twiml.say('Please describe your image '
-    + 'after the beep, when finished press star ',
+  twiml.say('Please describe your image after the beep, when finished press star ',
     { voice: 'alice', language: 'en-GB' });
   twiml.record({
     transcribe: true,
@@ -102,15 +101,7 @@ const postImage = (twiml, cookie, cb) => {
     playBeep: true,
     finishOnKey: '*',
   });
-  twiml.gather({
-    action: '/ivr/instagram_actions',
-    numDigits: '1',
-    method: 'POST',
-  }, (node) => {
-    node.say(`Comment saved. ${sayInstagramActions()}`,
-    { voice: 'alice', language: 'en-GB' });
-  });
-  return cb();
+  return cb(twiml);
 };
 
 
@@ -182,7 +173,7 @@ router.post('/menu', twilio.webhook({ validate: false }), (request, response) =>
 
     if (optionActions[selectedOption]) {
       const twiml = new twilio.TwimlResponse();
-      optionActions[selectedOption](twiml, cookie, (twimlOutput) => response.send(twimlOutput));
+      optionActions[selectedOption](twiml, cookie, () => response.send(twiml));
       return;
     }
     response.send(redirectWelcome());
@@ -211,10 +202,7 @@ router.post('/instagram_actions', twilio.webhook({ validate: false }), (request,
     };
     if (optionActions[selectedOption]) {
       const twiml = new twilio.TwimlResponse();
-      optionActions[selectedOption](twiml, cookie, () => {
-        console.log('about to respond');
-        response.send(twiml);
-      });
+      optionActions[selectedOption](twiml, cookie, () => response.send(twiml));
       return;
     }
     response.send(redirectWelcome());
@@ -234,11 +222,11 @@ router.post('/save_comment', twilio.webhook({ validate: false }), (request, resp
 
 // POST: '/ivr/save_post'
 router.post('/save_post', twilio.webhook({ validate: false }), (request, response) => {
-  const comment = request.body.TranscriptionText;
-  getCookie(request.body.From, (cookie) => {
-    commentIgPost(cookie.username, cookie.postIndex, cookie.token, comment);
-    console.log(`Comment Transcription: ${comment}`);
-  });
+  // const comment = request.body.TranscriptionText;
+  // getCookie(request.body.From, (cookie) => {
+  //   commentIgPost(cookie.username, cookie.postIndex, cookie.token, comment);
+  //   console.log(`Comment Transcription: ${comment}`);
+  // });
   return response.send(200);
 });
 
