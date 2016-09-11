@@ -1,6 +1,6 @@
 import express from 'express';
 import twilio from 'twilio';
-import { getIgData, precacheIgPosts, getPostForUser } from './instagram';
+import { getIgData, precacheIgPosts, getPostForUser, likeIgPost, commentIgPost } from './instagram';
 import { setCookie, getCookie } from './cookie.js';
 
 // eslint-disable-next-line new-cap
@@ -60,7 +60,7 @@ const viewProfile = (twiml, cookie, cb) => {
 };
 
 const likePost = (twiml, cookie, cb) => {
-  likePost(cookie.username, cookie.postIndex, cookie.token);
+  likeIgPost(cookie.username, cookie.postIndex, cookie.token);
   twiml.gather({
     action: '/ivr/instagram_actions',
     numDigits: '1',
@@ -199,7 +199,11 @@ router.post('/instagram_actions', twilio.webhook({ validate: false }), (request,
 
 // POST: '/ivr/save_comment'
 router.post('/save_comment', twilio.webhook({ validate: false }), (request, response) => {
-  console.log(`Comment Transcription: ${request.body.TranscriptionText}`);
+  console.log(request.body);
+  const comment = request.body.TranscriptionText;
+  commentIgPost(cookie.username, cookie.postIndex, cookie.token, comment);
+
+  console.log(`Comment Transcription: ${comment}`);
   return response.send(200);
 });
 export default router;

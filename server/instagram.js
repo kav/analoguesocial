@@ -34,13 +34,28 @@ export const getPostForUser = (user, index, cb) => {
     cb(post);
   });
 };
-export const likePost = (user, index, token) => {
+export const likeIgPost = (user, index, token) => {
   getPostForUser(user, index, (post) => {
     const body = new FormData();
     body.append('access_token', token);
     fetch(`https://api.instagram.com/v1/media/shortcode/${post.id}?access_token=${token}`)
     .then().then((resp) => resp.json()).then((json) => {
       fetch(`https://api.instagram.com/v1/media/${json.data.id}/likes`, {
+        method: 'POST',
+        body,
+      }).then((resp) => resp.json()).then(console.log);
+    });
+  });
+};
+export const commentIgPost = (user, index, token, comment) => {
+  getPostForUser(user, index, (post) => {
+    const body = new FormData();
+    body.append('access_token', token);
+    body.append('text', comment);
+
+    fetch(`https://api.instagram.com/v1/media/shortcode/${post.id}?access_token=${token}`)
+    .then().then((resp) => resp.json()).then((json) => {
+      fetch(`https://api.instagram.com/v1/media/${json.data.id}/comments`, {
         method: 'POST',
         body,
       }).then((resp) => resp.json()).then(console.log);
