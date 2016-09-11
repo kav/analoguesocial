@@ -1,15 +1,9 @@
 // Audio Filters
 
 const filters = {
-  'jean-luc': {'voice': 'man',   // I made this up
-               'language': 'fr',
-               'closingDialogue': 'Magnifique.'},
-  'nashville': {'closingDialogue': 'What memories'},
-  'valencia': {'closingDialogue': 'like the ones from my childhood'},
+  'nashville': {'closingDialogue': 'there is a sense, not only of loss,' +
+                'but of hope'},
+  'valencia': {'closingDialogue': 'as though from your childhood'},
   'lo-fi': {'closingDialogue': 'Without shadow there can be no light'},
   'hefe': {'closingDialogue': 'Such colors. Such vibrance. You are moved.'}
 };
-
-const randomSilliness = ["A sense of peace.",
-                         "There is joy here.",
-                         "My god. The poignancy."];
