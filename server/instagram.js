@@ -68,18 +68,21 @@ export const precacheIgPosts = (username) => {
   let counter = 0;
   const user = username;
   const userRef = postsRef.child(user);
-
   const streamOfPosts = new InstagramPosts({
     username: user,
   });
   streamOfPosts.on('data', (post) => {
     if (post.type !== 'image') return;
-    if (counter < 5) {
-      descriptionFromImage(post.media, (description) => {
-        if (description) {
-          post.description = description;
-          userRef.push(post);
-        } else { counter--; }
+    if (counter < 10) {
+      userRef.child(post.id).once((snapshot) => {
+        if (!snapshot.exists()) {
+          descriptionFromImage(post.media, (description) => {
+            if (description) {
+              post.description = description;
+              userRef.child(post.id).set();
+            } else { counter--; }
+          });
+        }
       });
       counter++;
     }
