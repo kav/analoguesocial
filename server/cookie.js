@@ -1,12 +1,17 @@
 import Firebase from 'firebase';
 
 const rootRef = Firebase.database().ref();
-const cookieRef = rootRef.child('cookies');
+const cookiesRef = rootRef.child('cookies');
 
-export const setCookie = (data) => cookieRef.push(data).key;
+export const setCookie = (data) => {
+  const cookieRef = cookiesRef.push();
+  cookieRef.set(data);
+  return cookieRef.key;
+};
 
 export const getCookie = (key, cb) => {
-  cookieRef.child(key).on('value', (snapshot) => {
+  const cookieRef = cookiesRef.child(key);
+  cookieRef.on('value', (snapshot) => {
     const cookie = snapshot.val();
     return cb(cookie);
   });
