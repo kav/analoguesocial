@@ -1,22 +1,41 @@
 import express from 'express';
 // import twilio from 'twilio';
-// import fetch from 'node-fetch';
+import fetch from 'node-fetch';
+import FormData from 'form-data';
+import Firebase from 'firebase';
 
 // eslint-disable-next-line new-cap
 const router = express.Router();
 
 router.get('/', (req, res, ) => {
   console.log('REQ MADE');
-  const envUrl = 'http://localhost:3000/signup/token';
+  const envUrl = `http://${req.headers.host}/signup/token`;
   res.redirect('https://api.instagram.com/oauth/authorize/' +
   '?client_id=9b6c05b9a31643ea9abcd7651f7a6bd2' +
   '&scope=follower_list+likes+comments' +
   `&redirect_uri=${envUrl}` +
-  '&response_type=token');
+  '&response_type=code');
 });
 
 router.get('/token', (req, res) => {
-  console.log(req);
+  const code = req.query.code;
+
+  const body = new FormData();
+  body.append('client_id', '9b6c05b9a31643ea9abcd7651f7a6bd2');
+  body.append('client_secret', 'dc67648b48f3412b92a02e6bd817b68f');
+  body.append('code', code);
+  body.append('grant_type', 'authorization_code');
+  body.append('redirect_uri', `http://${req.headers.host}/signup/token`);
+
+  fetch('https://api.instagram.com/oauth/access_token', {
+    method: 'POST',
+    body
+  })
+    .then((response) => response.json())
+    .then((json) =>{
+      console.log(json);
+      res.redirect('/');
+    })
 });
 
 // router.get('/:access_token', function(req, res, next) {
