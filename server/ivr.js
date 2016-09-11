@@ -129,6 +129,7 @@ router.post('/welcome', twilio.webhook({ validate: false }), (request, response)
   usersRef.child(request.body.From).on('value', (snapshot) => {
     const user = snapshot.val();
     console.log(user);
+    console.log(snapshot);
     const twiml = new twilio.TwimlResponse();
     twiml.gather({
       action: '/ivr/menu',
