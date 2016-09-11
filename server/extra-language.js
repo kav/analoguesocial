@@ -7,5 +7,6 @@ const filters = {
   'nashville': {'closingDialogue': 'What memories'},
   'valencia': {'closingDialogue': 'like the ones from my childhood'},
   'lo-fi': {'closingDialogue': 'Without shadow there can be no light'},
+  'hefe': {'closingDialogue': 'Such colors. Such vibrance. You are moved.'}
 };
 
