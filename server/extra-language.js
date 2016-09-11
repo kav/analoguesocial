@@ -10,3 +10,6 @@ const filters = {
   'hefe': {'closingDialogue': 'Such colors. Such vibrance. You are moved.'}
 };
 
+const randomSilliness = ["A sense of peace.",
+                         "There is joy here.",
+                         "My god. The poignancy."];
