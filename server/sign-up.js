@@ -1,15 +1,14 @@
 import express from 'express';
-// import twilio from 'twilio';
 import fetch from 'node-fetch';
 import FormData from 'form-data';
 
-var firebase = require('firebase/app');
+var firebase = require('firebase');
 
-firebase.intializeApp({
+firebase.initializeApp({
   apiKey: "AIzaSyBE67a9yY679V3XSYuG58z-AiaLzVfvNuM",
-    authDomain: "analoguesocial.firebaseapp.com",
-    databaseURL: "https://analoguesocial.firebaseio.com",
-    storageBucket: "analoguesocial.appspot.com",
+  authDomain: "analoguesocial.firebaseapp.com",
+  databaseURL: "https://analoguesocial.firebaseio.com",
+  storageBucket: "analoguesocial.appspot.com",
 });
 const rootRef = firebase.database().ref();
 
