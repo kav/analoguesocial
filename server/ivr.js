@@ -39,7 +39,7 @@ const viewPost = (twiml, cookie, cb) => {
       node.say(`${post.description} ${sayInstagramActions()}`,
         { voice: 'alice', language: 'en-GB' });
     });
-    return cb();
+    return cb(twiml);
   });
 };
 
@@ -159,12 +159,11 @@ router.post('/menu', twilio.webhook({ validate: false }), (request, response) =>
 
     if (optionActions[selectedOption]) {
       const twiml = new twilio.TwimlResponse();
-      optionActions[selectedOption](twiml, cookie, () => response.send(twiml));
-      return;
-    } else {
-      response.send(redirectWelcome());
+      optionActions[selectedOption](twiml, cookie, (twimlOutput) => response.send(twimlOutput));
       return;
     }
+    response.send(redirectWelcome());
+    return;
   });
 });
 
