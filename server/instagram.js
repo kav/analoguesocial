@@ -74,7 +74,7 @@ export const precacheIgPosts = (username) => {
   streamOfPosts.on('data', (post) => {
     if (post.type !== 'image') return;
     if (counter < 10) {
-      userRef.child(post.id).once((snapshot) => {
+      userRef.child(post.id).once('value', (snapshot) => {
         if (!snapshot.exists()) {
           descriptionFromImage(post.media, (description) => {
             if (description) {
