@@ -3,7 +3,7 @@ import express from 'express';
 import bodyParser from 'body-parser';
 import signUp from './sign-up';
 import ivr from './ivr';
-import api from './api';
+// import api from './api';
 import scrapper from './scrapper';
 
 const app = express();
@@ -11,7 +11,7 @@ const app = express();
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-app.use('/api', api);
+// app.use('/api', api);
 app.use('/ivr', ivr);
 app.use('/scrapper', scrapper);
 

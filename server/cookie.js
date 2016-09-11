@@ -12,7 +12,7 @@ export const setCookie = (key, data) => {
 
 export const getCookie = (key, cb) => {
   const cookieRef = cookiesRef.child(key);
-  cookieRef.on('value', (snapshot) => {
+  cookieRef.once('value', (snapshot) => {
     const cookie = snapshot.val();
     return cb(cookie);
   });

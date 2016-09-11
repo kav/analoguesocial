@@ -20,7 +20,7 @@ export const getIgData = (phone, cb) => {
   if (!phone) throw new Error('Need phone');
   if (!cb) throw new Error('Need cb');
   const formattedPhone = formatPhone(phone);
-  usersRef.child(formattedPhone).on('value', (snapshot) => {
+  usersRef.child(formattedPhone).once('value', (snapshot) => {
     const user = snapshot.val();
     cb(user);
   });
