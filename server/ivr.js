@@ -149,6 +149,7 @@ router.post('/welcome', twilio.webhook({ validate: false }), (request, response)
 // POST: '/ivr/menu'
 router.post('/menu', twilio.webhook({ validate: false }), (request, response) => {
   const selectedOption = request.body.Digits;
+  console.log(request.get('Cookie'));
   const cookie = JSON.parse(request.get('Cookie'));
   const optionActions = {
     1: viewPost,
