@@ -2,7 +2,19 @@ import express from 'express';
 // import twilio from 'twilio';
 import fetch from 'node-fetch';
 import FormData from 'form-data';
-import Firebase from 'firebase';
+
+var firebase = require('firebase/app');
+
+firebase.intializeApp({
+  apiKey: "AIzaSyBE67a9yY679V3XSYuG58z-AiaLzVfvNuM",
+    authDomain: "analoguesocial.firebaseapp.com",
+    databaseURL: "https://analoguesocial.firebaseio.com",
+    storageBucket: "analoguesocial.appspot.com",
+});
+const rootRef = firebase.database().ref();
+
+
+const usersRef = rootRef.child("users");
 
 // eslint-disable-next-line new-cap
 const router = express.Router();
@@ -35,6 +47,8 @@ router.get('/token', (req, res) => {
     .then((response) => response.json())
     .then((json) =>{
       console.log(json);
+
+      usersRef.child(tel).set(json);
       res.redirect('/');
     })
 });
