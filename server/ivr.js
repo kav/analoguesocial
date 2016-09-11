@@ -34,6 +34,21 @@ const viewPost = (twiml) => {
     numDigits: '1',
     method: 'POST',
   }, (node) => {
+    // TODO: load photo here
+    node.say('At LOCATION on DATE at TIME, USERNAME took a photo of DESCRIPTION. '
+    + `${sayInstagramActions()}`,
+    { voice: 'alice', language: 'en-GB' });
+  });
+  return twiml;
+};
+
+const viewProfile = (twiml) => {
+  twiml.gather({
+    action: '/ivr/instagram_actions',
+    numDigits: '1',
+    method: 'POST',
+  }, (node) => {
+    // TODO: load profile stuff here
     node.say('At LOCATION on DATE at TIME, USERNAME took a photo of DESCRIPTION. '
     + `${sayInstagramActions()}`,
     { voice: 'alice', language: 'en-GB' });
@@ -47,7 +62,7 @@ const likePost = (twiml) => {
     numDigits: '1',
     method: 'POST',
   }, (node) => {
-    node.say('Liked photo of DESCRIPTION At LOCATION on DATE at TIME by USERNAME. ' +
+    node.say('Liked photo. ' +
        `${sayInstagramActions()}`,
     { voice: 'alice', language: 'en-GB' });
   });
@@ -137,8 +152,8 @@ router.post('/instagram_actions', twilio.webhook({ validate: false }), (request,
     1: likePost,
     2: commentOnPost,
     3: notImpl, // sharePost
-    4: notImpl, // nextPost
-    5: notImpl, // profilePhoto
+    4: nextPost, // nextPost
+    5: viewProfile, // profilePhoto
     6: viewPost,
     9: repeatPostOptions,
     0: operator,
