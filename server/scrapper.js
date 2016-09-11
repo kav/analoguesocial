@@ -1,3 +1,5 @@
+/* eslint-disable */
+
 import express from 'express';
 import Firebase from 'firebase';
 

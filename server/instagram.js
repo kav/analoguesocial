@@ -76,7 +76,7 @@ export const precacheIgPosts = (username) => {
       descriptionFromImage(post.media, (description) => {
         if (description) {
           post.description = description;
-          const postRef = userRef.push(post);
+          userRef.push(post);
         } else { counter--; }
       });
       counter++;
