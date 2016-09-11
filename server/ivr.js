@@ -53,7 +53,7 @@ const viewProfile = (twiml, cookie, cb) => {
     method: 'POST',
   }, (node) => {
     // TODO: load profile stuff here
-    node.say('At LOCATION on DATE at TIME, USERNAME took a photo of DESCRIPTION. '
+    node.say(`${cookie.bio}. Profile photo shows ${descriptionFromImage(cookie.profileImage)}`
     + `${sayInstagramActions()}`,
     { voice: 'alice', language: 'en-GB' });
   });
@@ -140,8 +140,10 @@ router.post('/welcome', twilio.webhook({ validate: false }), (request, response)
     });
     const cookie = {
       postIndex: 0,
-      token: igData.token,
+      // token: igData.token,
       username: igData.user.username,
+      bio: igData.user.bio,
+      profileImage: igData.user.profile_picture,
     };
     console.log(cookie);
     const cookieKey = setCookie(cookie);
