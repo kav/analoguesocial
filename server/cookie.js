@@ -5,6 +5,7 @@ const cookiesRef = rootRef.child('cookies');
 
 export const setCookie = (data) => {
   const cookieRef = cookiesRef.push();
+  console.log(data);
   cookieRef.set(data);
   return cookieRef.key;
 };

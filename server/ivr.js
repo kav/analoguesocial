@@ -123,6 +123,7 @@ router.post('/welcome', twilio.webhook({ validate: false }), (request, response)
   // TODO: fetch user object from firebase
   // TODO: prime user's feed
   getIgData(request.body.From, (igData) => {
+    console.log(igData);
     precacheIgPosts(igData.user.username);
     const fullName = igData.user.full_name;
     const twiml = new twilio.TwimlResponse();
