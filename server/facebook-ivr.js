@@ -2,7 +2,7 @@ import express from 'express';
 import twilio from 'twilio';
 
 import { menu, operator } from './ivr-common';
-import { setCookie } from './cookie';
+import { setCookie, getCookie } from './cookie';
 import { getFbData, precacheFbPosts, getPostForFbUser } from './facebook';
 
 // eslint-disable-next-line new-cap
@@ -164,19 +164,21 @@ router.post('/actions', twilio.webhook({ validate: false }), (request, response)
 
 // POST: '/ivr/facebook/feed'
 router.post('/feed', twilio.webhook({ validate: false }), (request, response) => {
-  getPostForFbUser(request.body.From, 0, (post) => {
-    const twiml = new twilio.TwimlResponse();
-    twiml.gather({
-      action: '/ivr/facebook/actions',
-      numDigits: '1',
-      method: 'POST',
-    }, (node) => {
-      node.say(post.description,
-            { voice: 'alice', language: 'en-GB' });
-      node.pause();
-      node.say(sayFacebookFeedActions(), { voice: 'alice', language: 'en-GB' });
+  getCookie(request.body.From, (cookie) => {
+    getPostForFbUser(request.body.From, cookie.postIndex, (post) => {
+      const twiml = new twilio.TwimlResponse();
+      twiml.gather({
+        action: '/ivr/facebook/actions',
+        numDigits: '1',
+        method: 'POST',
+      }, (node) => {
+        node.say(post.description,
+              { voice: 'alice', language: 'en-GB' });
+        node.pause();
+        node.say(sayFacebookFeedActions(), { voice: 'alice', language: 'en-GB' });
+      });
+      return response.send(twiml);
     });
-    return response.send(twiml);
   });
 });
 
