@@ -6,31 +6,26 @@ import Firebase from 'firebase';
 import { PhoneNumberFormat, PhoneNumberUtil } from 'google-libphonenumber';
 import descriptionFromImage from './description-from-image';
 
-Firebase.initializeApp({
-  apiKey: 'AIzaSyBE67a9yY679V3XSYuG58z-AiaLzVfvNuM',
-  authDomain: 'analoguesocial.firebaseapp.com',
-  databaseURL: 'https://analoguesocial.firebaseio.com',
-  storageBucket: 'analoguesocial.appspot.com',
-});
 const rootRef = Firebase.database().ref();
-const instagramRef = rootRef.child('instagram');
-const usersRef = instagramRef.child('users');
+const facebookRef = rootRef.child('facebook');
+const usersRef = facebookRef.child('users');
 
 // eslint-disable-next-line new-cap
 const router = express.Router();
 
 router.post('/', (req, res) => {
-  const phoneUtil = PhoneNumberUtil.getInstance();
-  const phoneNumber = phoneUtil.parse(req.body.number, 'US');
-  const tel = phoneUtil.format(phoneNumber, PhoneNumberFormat.E164);
-  const igBugAvoidTel = tel.substring(1);
-  const envUrl = `http://${req.headers.host}/signup/token?tel=${igBugAvoidTel}`;
-  const redirectUri = 'https://api.instagram.com/oauth/authorize/' +
-  '?client_id=9b6c05b9a31643ea9abcd7651f7a6bd2' +
-  '&scope=follower_list+likes+comments' +
-  '&response_type=code' +
-  `&redirect_uri=${envUrl}`;
-  res.redirect(redirectUri);
+  console.log(req.body);
+//   const phoneUtil = PhoneNumberUtil.getInstance();
+//   const phoneNumber = phoneUtil.parse(req.body.number, 'US');
+//   const tel = phoneUtil.format(phoneNumber, PhoneNumberFormat.E164);
+//   const igBugAvoidTel = tel.substring(1);
+//   const envUrl = `http://${req.headers.host}/signup/token?tel=${igBugAvoidTel}`;
+//   const redirectUri = 'https://api.instagram.com/oauth/authorize/' +
+//   '?client_id=9b6c05b9a31643ea9abcd7651f7a6bd2' +
+//   '&scope=follower_list+likes+comments' +
+//   '&response_type=code' +
+//   `&redirect_uri=${envUrl}`;
+//   res.redirect(redirectUri);
 });
 
 router.get('/token', (req, res) => {

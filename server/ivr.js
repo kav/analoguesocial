@@ -180,11 +180,11 @@ router.post('/instagram', twilio.webhook({ validate: false }), (request, respons
 router.post('/main_menu', twilio.webhook({ validate: false }), (request, response) => {
   menu(request, response, {
     1: (twiml, cookie, cb) => {
-      twiml.redirect('/ivr/instagram', method: 'POST');
+      twiml.redirect('/ivr/instagram', { method: 'POST' });
       cb();
     },
     2: (twiml, cookie, cb) => {
-      twiml.redirect('/ivr/facebook', method: 'POST');
+      twiml.redirect('/ivr/facebook', { method: 'POST' });
       cb();
     },
   });

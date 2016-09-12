@@ -1,4 +1,5 @@
 import twilio from 'twilio';
+import { PhoneNumberFormat, PhoneNumberUtil } from 'google-libphonenumber';
 
 import { getCookie } from './cookie';
 
@@ -25,4 +26,10 @@ export const menu = (request, response, optionActions) => {
 export const operator = (twiml, cookie, cb) => {
   twiml.dial('+12063312167');
   return cb();
+};
+
+export const formatPhone = (phone) => {
+  const phoneUtil = PhoneNumberUtil.getInstance();
+  const phoneNumber = phoneUtil.parse(phone, 'US');
+  return phoneUtil.format(phoneNumber, PhoneNumberFormat.E164);
 };

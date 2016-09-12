@@ -1,20 +1,15 @@
 import Firebase from 'firebase';
 import fetch from 'node-fetch';
 import FormData from 'form-data';
-import { PhoneNumberFormat, PhoneNumberUtil } from 'google-libphonenumber';
 import { InstagramPosts } from 'instagram-screen-scrape';
 
+import { formatPhone } from './ivr-common';
 import descriptionFromImage from './description-from-image';
 
 const rootRef = Firebase.database().ref();
-const usersRef = rootRef.child('users');
-const postsRef = rootRef.child('posts');
-
-export const formatPhone = (phone) => {
-  const phoneUtil = PhoneNumberUtil.getInstance();
-  const phoneNumber = phoneUtil.parse(phone, 'US');
-  return phoneUtil.format(phoneNumber, PhoneNumberFormat.E164);
-};
+const instagramRef = rootRef.child('instagram');
+const usersRef = instagramRef.child('users');
+const postsRef = instagramRef.child('posts');
 
 export const getIgData = (phone, cb) => {
   if (!phone) throw new Error('Need phone');

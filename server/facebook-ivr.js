@@ -14,12 +14,22 @@ router.post('/', twilio.webhook({ validate: false }), (request, response) => {
     numDigits: '10',
     method: 'POST',
   }, (node) => {
-    node.say('Welcome to Facebook. Be Connected. Be Discovered. Be on Facebook. ' +
+    node.say('Welcome to Facebook; Be Connected. Be Discovered. Be on Facebook. ' +
         'Brought to you by Analogue Social. ' +
         'surfing the information superhighway at the pace of yesterday. ' +
         'To post a to Facebook, please press 1. ' +
         'To view your Facebook feed, please press 2.');
   });
+  const cookie = {
+    postIndex: 0,
+    token: igData.access_token,
+    username: igData.user.username,
+    bio: igData.user.bio,
+    description: igData.user.description,
+    profileImage: igData.user.profile_picture,
+  };
+  console.log(cookie);
+  setCookie(request.body.From, cookie);
   return response.send(twiml);
 });
 
@@ -174,3 +184,5 @@ router.post('/save_status', twilio.webhook({ validate: false }), (request, respo
   // TODO: save status update
   return response.send(200);
 });
+
+export default router;
