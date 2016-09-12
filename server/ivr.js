@@ -2,6 +2,8 @@ import express from 'express';
 import twilio from 'twilio';
 import { getIgData, precacheIgPosts, getPostForUser, likeIgPost, commentIgPost } from './instagram';
 import { setCookie, getCookie } from './cookie';
+import facebookIVR from './facebook-ivr';
+import { menu } from './ivr-common';
 
 // eslint-disable-next-line new-cap
 const router = express.Router();
@@ -122,35 +124,43 @@ const operator = (twiml, cookie, cb) => {
   twiml.dial('+12063312167');
   return cb();
 };
-const redirectWelcome = () => {
-  const twiml = new twilio.TwimlResponse();
-  twiml.say('Returning to the main menu', { voice: 'alice', language: 'en-GB' });
-  twiml.redirect('/ivr/welcome');
-  return twiml;
-};
-
 
 // POST: '/ivr/welcome'
 router.post('/welcome', twilio.webhook({ validate: false }), (request, response) => {
-  // TODO: fetch user object from firebase
-  // TODO: prime user's feed
+  const twiml = new twilio.TwimlResponse();
+  twiml.gather({
+    action: '/ivr/main_menu',
+    numDigits: '10',
+    method: 'POST',
+  }, (node) => {
+    node.say('Welcome to Analogue Social, TAGLINE!' +
+      'This call may be recorded for quality and training purposes. ' +
+      'Listen carefully as our menu options have recently changed. ' +
+      'To visit Insta gram please press 1' +
+      'For Facebook please press 2.' +
+      'If you are on a rotary telephone please hold for an operator.'
+    );
+  });
+  return response.send(twiml);
+});
+router.use('/facebook', facebookIVR);
+
+// POST: '/ivr/instagram'
+router.post('/instagram', twilio.webhook({ validate: false }), (request, response) => {
   getIgData(request.body.From, (igData) => {
     precacheIgPosts(igData.user.username);
     const fullName = igData.user.full_name;
     const twiml = new twilio.TwimlResponse();
     twiml.gather({
-      action: '/ivr/menu',
+      action: '/ivr/ig_menu',
       numDigits: '10',
       method: 'POST',
     }, (node) => {
       node.say(`Welcome to insta gram ${fullName}. Capture and Share the World\'s Moments, ` +
           'Brought to you by Analogue Social. ' +
           'surfing the information superhighway at the pace of yesterday. ' +
-          'This call may be recorded for quality and training purposes. ' +
-          'Listen carefully as our menu options have recently changed. ' +
           'To post a new photo to your Insta gram feed, please press 1. ' +
-          'To view your Insta gram feed, please press 2. ' +
-          'If you are on a rotary telephone please hold for an operator.');
+          'To view your Insta gram feed, please press 2. ');
     });
     const cookie = {
       postIndex: 0,
@@ -166,52 +176,48 @@ router.post('/welcome', twilio.webhook({ validate: false }), (request, response)
   });
 });
 
-// POST: '/ivr/menu'
-router.post('/menu', twilio.webhook({ validate: false }), (request, response) => {
-  const selectedOption = request.body.Digits;
-  getCookie(request.body.From, (cookie) => {
-    const optionActions = {
-      1: postImage,
-      2: viewPost,
-    };
-
-    if (optionActions[selectedOption]) {
-      const twiml = new twilio.TwimlResponse();
-      optionActions[selectedOption](twiml, cookie, () => response.send(twiml));
-      return;
-    }
-    response.send(redirectWelcome());
-    return;
+// POST: '/ivr/main_menu'
+router.post('/main_menu', twilio.webhook({ validate: false }), (request, response) => {
+  menu(request, response, {
+    1: (twiml, cookie, cb) => {
+      twiml.redirect('/ivr/instagram', { method: 'POST' });
+      cb();
+    },
+    2: (twiml, cookie, cb) => {
+      twiml.redirect('/ivr/facebook', { method: 'POST' });
+      cb();
+    },
   });
+  return;
+});
+
+// POST: '/ivr/ig_menu'
+router.post('/ig_menu', twilio.webhook({ validate: false }), (request, response) => {
+  menu(request, response, {
+    1: postImage,
+    2: viewPost,
+  });
+  return;
 });
 
 // POST: '/ivr/instagram_actions'
 router.post('/instagram_actions', twilio.webhook({ validate: false }), (request, response) => {
-  const selectedOption = request.body.Digits;
-  getCookie(request.body.From, (cookie) => {
-    const optionActions = {
-      1: likePost,
-      2: commentOnPost,
-      3: notImpl, // sharePost
-      4: (twiml, cook, cb) => {
-        cook.postIndex++;
-        console.log(cook);
-        setCookie(request.body.From, cook);
-        return viewPost(twiml, cook, cb);
-      }, // nextPost
-      5: viewProfile, // profilePhoto
-      6: viewPost,
-      9: repeatPostOptions,
-      0: operator,
-    };
-    if (optionActions[selectedOption]) {
-      const twiml = new twilio.TwimlResponse();
-      optionActions[selectedOption](twiml, cookie, () => response.send(twiml));
-      return;
-    }
-    response.send(redirectWelcome());
-    return;
+  menu(request, response, {
+    1: likePost,
+    2: commentOnPost,
+    3: notImpl, // sharePost
+    4: (twiml, cook, cb) => {
+      cook.postIndex++;
+      console.log(cook);
+      setCookie(request.body.From, cook);
+      return viewPost(twiml, cook, cb);
+    }, // nextPost
+    5: viewProfile, // profilePhoto
+    6: viewPost,
+    9: repeatPostOptions,
+    0: operator,
   });
+  return;
 });
 
 // POST: '/ivr/save_comment'

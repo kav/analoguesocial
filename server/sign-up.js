@@ -13,9 +13,8 @@ Firebase.initializeApp({
   storageBucket: 'analoguesocial.appspot.com',
 });
 const rootRef = Firebase.database().ref();
-
-
-const usersRef = rootRef.child('users');
+const instagramRef = rootRef.child('instagram');
+const usersRef = instagramRef.child('users');
 
 // eslint-disable-next-line new-cap
 const router = express.Router();

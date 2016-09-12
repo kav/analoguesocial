@@ -2,7 +2,9 @@
 import express from 'express';
 import bodyParser from 'body-parser';
 import signUp from './sign-up';
+import facebookSignUp from './facebook-sign-up';
 import ivr from './ivr';
+
 // import api from './api';
 import scrapper from './scrapper';
 
@@ -18,6 +20,8 @@ app.use('/scrapper', scrapper);
 app.use(express.static('./static'));
 
 app.use('/signup', signUp);
+app.use('/fb-signup', facebookSignUp);
+
 // app.use('/message', sendSMS);
 
 app.listen(process.env.PORT || 3000, () => {
