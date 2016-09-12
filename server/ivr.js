@@ -136,7 +136,7 @@ router.post('/welcome', twilio.webhook({ validate: false }), (request, response)
     node.say('Welcome to Analogue Social, TAGLINE!' +
       'This call may be recorded for quality and training purposes. ' +
       'Listen carefully as our menu options have recently changed. ' +
-      'To visit Insta gram please press 1' +
+      'To visit Insta gram please press 1. ' +
       'For Facebook please press 2.' +
       'If you are on a rotary telephone please hold for an operator.'
     );

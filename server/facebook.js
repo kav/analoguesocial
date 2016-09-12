@@ -33,6 +33,7 @@ export const precacheFbPosts = (phone, token) => {
   fetch(`https://graph.facebook.com/me/feed?limit=10&access_token=${token}`)
   .then((res) => res.json())
   .then((json) => {
+    console.log(json);
     json.forEach((fbPost) => {
       const post = {
         description: `${fbPost.story} ${fbPost.message ? `with message; ${fbPost.message}` : ''}`,
@@ -42,4 +43,4 @@ export const precacheFbPosts = (phone, token) => {
     });
   });
 };
-precacheFbPosts('EAACe39enYZCoBAOAZCZAa3puW6OpRr10kcBbSVKhUJnFQyCDDpz0hm1I010zsiLJ0uJIYtIFxdkAylr0BFqgPHxDvNvNqRoKM7ZCB1C86RoZAwlZAnZBs4yNUfo3dbQirDuJjhSBhO9BWQbvzFHPufedmrycgL0sIJZCBNAhFr3vYQZDZD');
+// precacheFbPosts('+12063312167','EAACe39enYZCoBAOAZCZAa3puW6OpRr10kcBbSVKhUJnFQyCDDpz0hm1I010zsiLJ0uJIYtIFxdkAylr0BFqgPHxDvNvNqRoKM7ZCB1C86RoZAwlZAnZBs4yNUfo3dbQirDuJjhSBhO9BWQbvzFHPufedmrycgL0sIJZCBNAhFr3vYQZDZD');
