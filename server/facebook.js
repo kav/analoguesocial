@@ -36,7 +36,9 @@ export const precacheFbPosts = (phone, token) => {
   .then((json) => {
     json.data.forEach((fbPost) => {
       const post = {
-        description: `${fbPost.story} ${fbPost.message ? `with message; ${fbPost.message}` : ''}`,
+        description:
+        `${fbPost.story ? fbPost.story : ''} ` +
+        `${fbPost.message ? `with message; ${fbPost.message}` : ''}`,
       };
       postsRef.child(phone).push(post);
     });
