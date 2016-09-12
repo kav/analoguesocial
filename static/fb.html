@@ -3,9 +3,9 @@
 <head>
 <title>Facebook Login JavaScript Example</title>
 <meta charset="UTF-8">
+<script src="http://cdnjs.cloudflare.com/ajax/libs/fetch/1.0.0/fetch.js"></script>
 </head>
 <body>
-  <script src='https://cdnjs.cloudflare.com/ajax/libs/fetch/1.0.0/fetch.js' />
 <script>
   // This is called with the results from from FB.getLoginStatus().
   function statusChangeCallback(response) {
@@ -17,11 +17,11 @@
     // for FB.getLoginStatus().
     if (response.status === 'connected') {
       // Logged into your app and Facebook.
+      document.getElementById("token").value = response.authResponse.accessToken;
+
+      console.log(response);
+      window.response = response;
       testAPI();
-      fetch('/fb-signup', {
-        method: 'POST',
-        body: { response }
-      });
     } else if (response.status === 'not_authorized') {
       // The person is logged into Facebook, but not your app.
       document.getElementById('status').innerHTML = 'Please log ' +
@@ -102,8 +102,10 @@
 
 <div id="status">
 </div>
-<form>
-<input type="text" />
+<form action="/fb-signup" method="POST">
+  <input type="phone" id="phone" name="phone" />
+  <input type="hidden" id="token" name="token" />
+  <input type="submit" />
 </form>
 </body>
 </html>

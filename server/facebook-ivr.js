@@ -2,35 +2,38 @@ import express from 'express';
 import twilio from 'twilio';
 
 import { menu, operator } from './ivr-common';
-import { setCookie } from './cookie';
+import { setCookie, getCookie } from './cookie';
+import { getFbData, precacheFbPosts, getPostForUser } from './facebook';
 
 // eslint-disable-next-line new-cap
 const router = express.Router();
 
 router.post('/', twilio.webhook({ validate: false }), (request, response) => {
-  const twiml = new twilio.TwimlResponse();
-  twiml.gather({
-    action: '/ivr/facebook/menu',
-    numDigits: '10',
-    method: 'POST',
-  }, (node) => {
-    node.say('Welcome to Facebook; Be Connected. Be Discovered. Be on Facebook. ' +
+  getFbData(request.body.From, (fbData) => {
+    precacheFbPosts(request.body.From, fbData.token);
+    const twiml = new twilio.TwimlResponse();
+    twiml.gather({
+      action: '/ivr/facebook/menu',
+      numDigits: '10',
+      method: 'POST',
+    }, (node) => {
+      node.say(`Hello ${fbData.user.name}. ` +
+        'Welcome to Facebook; Be Connected. Be Discovered. Be on Facebook. ' +
         'Brought to you by Analogue Social. ' +
         'surfing the information superhighway at the pace of yesterday. ' +
         'To post a to Facebook, please press 1. ' +
         'To view your Facebook feed, please press 2.');
+    });
+    const cookie = {
+      postIndex: 0,
+      token: fbData.token,
+      name: fbData.user.name,
+      userId: fbData.user.id,
+    };
+    console.log(cookie);
+    setCookie(request.body.From, cookie);
+    return response.send(twiml);
   });
-  const cookie = {
-    postIndex: 0,
-    token: igData.access_token,
-    username: igData.user.username,
-    bio: igData.user.bio,
-    description: igData.user.description,
-    profileImage: igData.user.profile_picture,
-  };
-  console.log(cookie);
-  setCookie(request.body.From, cookie);
-  return response.send(twiml);
 });
 
 // POST: '/ivr/facebook/menu'
@@ -161,18 +164,20 @@ router.post('/actions', twilio.webhook({ validate: false }), (request, response)
 
 // POST: '/ivr/facebook/feed'
 router.post('/feed', twilio.webhook({ validate: false }), (request, response) => {
-  const twiml = new twilio.TwimlResponse();
-  twiml.gather({
-    action: '/ivr/facebook/actions',
-    numDigits: '1',
-    method: 'POST',
-  }, (node) => {
-    node.say('post description',
-      { voice: 'alice', language: 'en-GB' });
-    node.pause();
-    node.say(sayFacebookFeedActions(), { voice: 'alice', language: 'en-GB' });
+  getPostForUser(request.body.From, 0, (post) => {
+    const twiml = new twilio.TwimlResponse();
+    twiml.gather({
+      action: '/ivr/facebook/actions',
+      numDigits: '1',
+      method: 'POST',
+    }, (node) => {
+      node.say(post.description,
+            { voice: 'alice', language: 'en-GB' });
+      node.pause();
+      node.say(sayFacebookFeedActions(), { voice: 'alice', language: 'en-GB' });
+    });
+    return response.send(twiml);
   });
-  return response.send(twiml);
 });
 
 router.post('/save_photo', twilio.webhook({ validate: false }), (request, response) => {
