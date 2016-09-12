@@ -19,7 +19,7 @@ export const getFbData = (phone, cb) => {
   });
 };
 
-export const getPostForUser = (phone, index, cb) => {
+export const getPostForFbUser = (phone, index, cb) => {
   const userRef = postsRef.child(phone);
   userRef.once('value', (snapshot) => {
     const posts = Object.values(snapshot.val());
@@ -30,6 +30,7 @@ export const getPostForUser = (phone, index, cb) => {
 };
 
 export const precacheFbPosts = (phone, token) => {
+  console.log('Pre-caching');
   fetch(`https://graph.facebook.com/me/feed?limit=10&access_token=${token}`)
   .then((res) => res.json())
   .then((json) => {

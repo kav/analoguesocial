@@ -2,8 +2,8 @@ import express from 'express';
 import twilio from 'twilio';
 
 import { menu, operator } from './ivr-common';
-import { setCookie, getCookie } from './cookie';
-import { getFbData, precacheFbPosts, getPostForUser } from './facebook';
+import { setCookie } from './cookie';
+import { getFbData, precacheFbPosts, getPostForFbUser } from './facebook';
 
 // eslint-disable-next-line new-cap
 const router = express.Router();
@@ -164,7 +164,7 @@ router.post('/actions', twilio.webhook({ validate: false }), (request, response)
 
 // POST: '/ivr/facebook/feed'
 router.post('/feed', twilio.webhook({ validate: false }), (request, response) => {
-  getPostForUser(request.body.From, 0, (post) => {
+  getPostForFbUser(request.body.From, 0, (post) => {
     const twiml = new twilio.TwimlResponse();
     twiml.gather({
       action: '/ivr/facebook/actions',
