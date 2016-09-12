@@ -20,7 +20,7 @@ export const getFbData = (phone, cb) => {
 };
 
 export const getPostForUser = (phone, index, cb) => {
-  const userRef = postsRef.child(user);
+  const userRef = postsRef.child(phone);
   userRef.once('value', (snapshot) => {
     console.log(posts);
     const posts = Object.values(snapshot.val());
